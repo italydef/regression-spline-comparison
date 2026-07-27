@@ -1,0 +1,1257 @@
+peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)
+plot.ts(pSignal)}
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+}
+clp
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+}
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+   if (i==1) plot(pSignal, type="l", col="navy")#
+   if ( i >= 1) lines(pSignal)#
+}
+pSignal=diff(datas[datas$id==1,3])
+plot(pSignal, type="l", col="navy")
+par(mfrow=c(1,1))
+plot(pSignal, type="l", col="navy")
+pSignal=diff(datas[datas$id==2,3])
+lines(pSignal, type="l", col="red")
+pSignal=diff(datas[datas$id==3,3])
+lines(pSignal, type="l", col="red")
+pSignal=datas[datas$id==1,3]
+plot(pSignal, type="l", col="navy")
+lines(pSignal, type="l", col="navy", lwd=3)
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="CLustering")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="clusters", #
+            legend=c("cluster 1", "cluster 2"), #
+            fill = c("red","green"))
+lines(pSignal, type="l", col="navy", lwd=3)
+lines(datas[datas$id==1,2],pSignal, type="l", col="navy", lwd=3)
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="CLustering")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="clusters", #
+            legend=c("cluster 1", "cluster 2"), #
+            fill = c("red","green"))
+lines(datas[datas$id==1,2],pSignal, type="l", col="navy", lwd=1,lty=2)
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+   lines(datas[datas$id==i,2],pSignal, type="l", col=clp[i]+8, lwd=1.2,lty=2)#
+}
+pSignal=datas[datas$id==11,3]
+lines(datas[datas$id==11,2],pSignal, type="l", col="navy", lwd=3)
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="clusters", #
+            legend=c("without overshoot", "with overshoot"), #
+            fill = c("balck","red"))
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="clusters", #
+            legend=c("without overshoot", "with overshoot"), #
+            fill = c("black","red"))
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+   lines(datas[datas$id==i,2],pSignal, type="l", col=clp[i], lwd=1.2)#
+}
+clp
+ines(datas[datas$id==10,2],datas[datas$id==10,3], type="l", col=1, lwd=3)
+lines(datas[datas$id==10,2],datas[datas$id==10,3], type="l", col=1, lwd=3)
+lines(datas[datas$id==10,2],datas[datas$id==10,3], type="l", col=0, lwd=5)
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="clusters", #
+            legend=c("without overshoot", "with overshoot"), #
+            fill = c("black","red"))
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+   lines(datas[datas$id==i,2],pSignal, type="l", col=clp[i]+1, lwd=1.2)#
+}
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="Overshoot", #
+            legend=c("without overshoot", "with overshoot"), #
+            fill = c("black","red"))
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+   points(datas[datas$id==i,2],pSignal, type="l", col=clp[i]+1, pch=20,cex=0.7)#
+}
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+   points(datas[datas$id==i,2],pSignal, type="p", col=clp[i]+1, pch=20,cex=0.7)#
+}
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="Overshoot", #
+            legend=c("without overshoot", "with overshoot"), #
+            fill = c("black","red"))
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+   points(datas[datas$id==i,2],pSignal, type="p", col=clp[i]+1, pch=20,cex=0.3)#
+}
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="Overshoot", #
+            legend=c("without overshoot", "with overshoot"), #
+            fill = c("black","red"))
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+   points(datas[datas$id==i,2],pSignal, type="p", col=clp[i]+1, pch=20,cex=0.2)#
+}
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="Overshoot", #
+            legend=c("without overshoot", "with overshoot"), #
+            fill = c("black","red"))
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+   lines(datas[datas$id==i,2],pSignal, type="l", col=clp[i]+1, pch=20,lwd=1.2)#
+}
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="Overshoot", #
+            legend=c("without overshoot", "with overshoot"), #
+            fill = c("black","red"))
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+   lines(datas[datas$id==i,2],pSignal, type="l", col=clp[i]+1, pch=20,lwd=1.2)#
+}
+auxsig1<-matrix(0,nrow=75,ncol=150)
+sum(clp=0)
+sum(clp==0)
+sum(clp==1)
+auxsig1<-matrix(0,nrow=27,ncol=150)
+auxsig2<-matrix(0,nrow=48,ncol=150)
+for (i in (1:27)) {
+}
+for (i in (1:75)) {
+if clp[i] == 0 }
+auxsig1<-rep(0,150)
+auxsig2<-rep(0,150)
+for (i in (1:75)) {
+}
+auxsig1<-NULL
+auxsig2<-NULL
+for (i in (1:75)) {
+if (clp[i]==0) auxsig1<-rbind(auxsig1,datas[datas$id==i,3])
+if (clp[i]==1) auxsig2<-rbind(auxsig2,datas[datas$id==i,3])
+}
+dim(auxsig1)
+dim(auxsig2)
+mean1<-apply(auxsig1,1,mean)
+mean1
+mean2<-apply(auxsig2,1,mean)
+lines(datas[datas$id==i,2], mean1, lwd = 4, col=1)
+mean1<-apply(auxsig1,2,mean)
+mean2<-apply(auxsig2,2,mean)
+lines(datas[datas$id==i,2], mean1, lwd = 4, col=1)
+points(datas[datas$id==i,2], mean1, lwd = 4, col=1, pch=20, cex=2)
+quartz()#
+  ymin<-min(datas$y); ymax<-max(datas$y)#
+ plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+        ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+ for(i in (1:75)) {#
+   lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1)#
+  }  #
+ legend(x = "topright", box.col = "brown",#
+             bg ="yellow", box.lwd = 2 , title="Overshoot", #
+             legend=c("without overshoot", "with overshoot"), #
+             fill = c("black","red"))#
+ clp<-rep(0,75) #
+ for (i in (1:75)) {#
+    pSignal=datas[datas$id==i,3]#
+    peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+    if (length(peaks_found) == 0) clp[i]=0#
+    if (length(peaks_found) > 0) clp[i]=1#
+    lines(datas[datas$id==i,2],pSignal, type="l", col=clp[i]+1, pch=20,lwd=1.2)#
+ }#
+#
+auxsig1<-NULL#
+auxsig2<-NULL#
+for (i in (1:75)) {#
+ if (clp[i]==0) auxsig1<-rbind(auxsig1,datas[datas$id==i,3])#
+ if (clp[i]==1) auxsig2<-rbind(auxsig2,datas[datas$id==i,3])#
+ }#
+mean1<-apply(auxsig1,2,mean)#
+mean2<-apply(auxsig2,2,mean)#
+lines(datas[datas$id==i,2], mean1, lwd = 4, col=1)#
+points(datas[datas$id==i,2], mean1, lwd = 4, col=1, pch=20, cex=2)
+quartz()#
+  ymin<-min(datas$y); ymax<-max(datas$y)#
+ plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+        ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+ for(i in (1:75)) {#
+   lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1)#
+  }  #
+ legend(x = "topright", box.col = "brown",#
+             bg ="yellow", box.lwd = 2 , title="Overshoot", #
+             legend=c("without overshoot", "with overshoot"), #
+             fill = c("black","red"))#
+ clp<-rep(0,75) #
+ for (i in (1:75)) {#
+    pSignal=datas[datas$id==i,3]#
+    peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+    if (length(peaks_found) == 0) clp[i]=0#
+    if (length(peaks_found) > 0) clp[i]=1#
+    lines(datas[datas$id==i,2],pSignal, type="l", col=clp[i]+1, pch=20,lwd=1.2)#
+ }#
+#
+auxsig1<-NULL#
+auxsig2<-NULL#
+for (i in (1:75)) {#
+ if (clp[i]==0) auxsig1<-rbind(auxsig1,datas[datas$id==i,3])#
+ if (clp[i]==1) auxsig2<-rbind(auxsig2,datas[datas$id==i,3])#
+ }#
+mean1<-apply(auxsig1,2,mean)#
+mean2<-apply(auxsig2,2,mean)#
+lines(datas[datas$id==i,2], mean1, lwd = 4, col=1)#
+points(datas[datas$id==i,2], mean1, lwd = 4, col=1, pch=20, cex=1.2)
+points(datas[datas$id==i,2], mean1, lwd = 4, col=1, pch=20, cex=1.2)#
+> points(datas[datas$id==i,2], mean1, lwd = 4, col=1, pch=20, cex=1.2)#
+> points(datas[datas$id==i,2], mean1, lwd = 4, col=1, pch=20, cex=1.2)#
+>  points(datas[datas$id==i,2], mean2, lwd = 4, col=2, pch=20, cex=1.2)
+points(datas[datas$id==i,2], mean1, lwd = 4, col=1, pch=20, cex=1.2)#
+> points(datas[datas$id==i,2], mean1, lwd = 4, col=1, pch=20, cex=1.2)#
+> points(datas[datas$id==i,2], mean1, lwd = 4, col=1, pch=20, cex=1.2)#
+ points(datas[datas$id==i,2], mean2, lwd = 4, col=2, pch=20, cex=1.2)
+quartz()#
+  ymin<-min(datas$y); ymax<-max(datas$y)#
+ plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+        ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+ for(i in (1:75)) {#
+   lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1)#
+  }  #
+ legend(x = "topright", box.col = "brown",#
+             bg ="yellow", box.lwd = 2 , title="Overshoot", #
+             legend=c("without overshoot", "with overshoot"), #
+             fill = c("black","red"))#
+ clp<-rep(0,75) #
+ for (i in (1:75)) {#
+    pSignal=datas[datas$id==i,3]#
+    peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+    if (length(peaks_found) == 0) clp[i]=0#
+    if (length(peaks_found) > 0) clp[i]=1#
+    lines(datas[datas$id==i,2],pSignal, type="l", col=clp[i]+1, pch=20,lwd=1.2)#
+ }#
+#
+auxsig1<-NULL#
+auxsig2<-NULL#
+for (i in (1:75)) {#
+ if (clp[i]==0) auxsig1<-rbind(auxsig1,datas[datas$id==i,3])#
+ if (clp[i]==1) auxsig2<-rbind(auxsig2,datas[datas$id==i,3])#
+ }#
+mean1<-apply(auxsig1,2,mean)#
+mean2<-apply(auxsig2,2,mean)#
+lines(datas[datas$id==i,2], mean1, lwd = 4, col=1)#
+points(datas[datas$id==i,2], mean1, lwd = 4, col=1, pch=20, cex=1.2)
+quartz()#
+  ymin<-min(datas$y); ymax<-max(datas$y)#
+ plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+        ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+ for(i in (1:75)) {#
+   lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1)#
+  }  #
+ legend(x = "topright", box.col = "brown",#
+             bg ="yellow", box.lwd = 2 , title="Overshoot", #
+             legend=c("without overshoot", "with overshoot"), #
+             fill = c("black","red"))#
+ clp<-rep(0,75) #
+ for (i in (1:75)) {#
+    pSignal=datas[datas$id==i,3]#
+    peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+    if (length(peaks_found) == 0) clp[i]=0#
+    if (length(peaks_found) > 0) clp[i]=1#
+    lines(datas[datas$id==i,2],pSignal, type="l", col=clp[i]+1, pch=20,lwd=1.2)#
+ }#
+#
+auxsig1<-NULL#
+auxsig2<-NULL#
+for (i in (1:75)) {#
+ if (clp[i]==0) auxsig1<-rbind(auxsig1,datas[datas$id==i,3])#
+ if (clp[i]==1) auxsig2<-rbind(auxsig2,datas[datas$id==i,3])#
+ }#
+mean1<-apply(auxsig1,2,mean)#
+mean2<-apply(auxsig2,2,mean)#
+points(datas[datas$id==i,2], mean1, col=1, pch=20, cex=2)#
+points(datas[datas$id==i,2], mean2, col=2, pch=20, cex=2)
+plot(diff(mean1),type="l", col=1)
+lines(diff(mean2),type="l", col=2)
+plot(diff(mean1),type="l", col=1)
+lines(diff(mean2),type="l", col=2)
+plot(diff(mean1),type="l", col=1, main="moyennes sur données lissées Delta Vt sans et avec OS")
+lines(diff(mean2),type="l", col=2)
+caret::confusionMatrix(as.factor(mod$clus_true), as.factor(clp))
+levels(as.factor(mod$clus_true))
+as.factor(mod$clus_true)
+mod$clus_true
+caret::confusionMatrix(as.factor(clus_true), as.factor(clp))
+levels(as.factor(clus_true))
+levels(as.factor(clp+1))
+caret::confusionMatrix(as.factor(clus_true), as.factor(clp+1))
+q()
+suppressPackageStartupMessages({#
+library(ggpubr)#
+library(knitr)#
+library(mosaic)#
+library(mgcv)#
+library(gratia)#
+library(ggplot2)#
+library(curvclust)#
+library(funHDDC)#
+library(clValid)#
+library(caret)#
+library(mclust)#
+library(NbClust)#
+library(MASS)#
+library(fda)#
+library(parallel)#
+library(pbmcapply)#
+library(matrixcalc)#
+library(pbapply)#
+library(fda.usc)#
+library(readxl)#
+library(tidyverse)#
+library(tidyfun)#
+library(mgcv)#
+library(pbmcapply)#
+library(factoextra)#
+library(gridExtra)#
+library(cowplot)#
+library(sasfunclust)#
+})#
+#
+load("datb.RData")#
+str(datb)#
+ ##### spaghetti plot of the data#
+datas<-datb#
+ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=as.integer(datas[,4]+2)[datas$id==1],type="l",#
+    ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Vt",main="spaghetti plot")#
+for(i in (1:75)) {#
+lines(datas[datas$id==i,2],datas[datas$id==i,3],col=as.integer(datas[,4]+2)[datas$id==i],lwd=2)#
+points(datas[datas$id==i,2],datas[datas$id==i,3],col=as.integer(datas[,4]+2)[datas$id==i],pch=20,cex=2)#
+}  #
+legend(x = "topright", box.col = "brown",#
+           bg ="yellow", box.lwd = 2 , title="Gold status", #
+            legend=c("Gold I_II", "Gold III_IV"), #
+            fill = c("red","green"))#
+rm(datas)#
+load("smoothdon.RData")#
+str(datas)#
+datas$id<-as.integer(datas$subject)#
+#
+##### spaghetti plot of the smoothed data#
+#
+mapping <- c("I_II" = 0, "III_IV" = 1)#
+datas$class<-mapping[datas$group]#
+#
+##### spaghetti plot of the data#
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,6]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="spaghetti plot")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,6]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="Gold status", #
+            legend=c("Gold I_II", "Gold III_IV"), #
+            fill = c("red","green"))
+grid <- seq(0, 1, length.out = 150)#
+X<-matrix(0,nrow=75,ncol=150)#
+for (i in (1:75)) X[i,]=datas[datas$subject==as.character(i),3]#
+domain <- c(0, 1)#
+X_basis <- fda::create.bspline.basis(domain, norder = 4, nbasis = 20)#
+data <- list(X = t(X), grid = grid)#
+data <- list(X = t(X), grid = grid)#
+dim(data$X)#
+# X_basis<- create.bspline.basis(c(0,1), nbasis=200)#
+loglam         = seq(-10, -4, 0.25)#
+Gcvsave        = numeric()#
+for(i in 1:length(loglam)){#
+  fdPari  = fdPar(X_basis, Lfdobj=2, 10^loglam[i])#
+  Sm.i    = smooth.basis(data$grid, data$X, fdPari)#
+  Gcvsave[i] = sum(Sm.i$gcv)  #
+}#
+lambda_s=10^loglam[which.min(Gcvsave)]#
+fdPari  = fdPar(X_basis, Lfdobj=2,lambda_s)#
+data$X_fd<-smooth.basis(data$grid, data$X, fdPari)$fd#
+quartz() # checking this is the smoothed data displayed before#
+plot(data$X_fd) #
+clus_true<-rep("1",75)#
+for (i in (1:75)) clus_true[i]=datas[datas$subject==as.character(i),4][1]#
+clus_true<-as.factor(clus_true)#
+levels(clus_true)<-c(1,2)#
+clus_true<-as.integer(clus_true)#
+mod<-sasfclust(X=data$X,grid=data$grid,G=2,#
+lambda_l = 1,lambda_s =0.001,maxit = 20,q=20)#
+print(mod$clus$classes)#
+plot(mod)#
+#
+aux<-NULL#
+for (i in (1:75))  aux=c(aux,rep(mod$clus$classes[i],150))#
+datas$clust<-aux#
+#
+# spaghetti plot of the clusters#
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="CLustering")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="clusters", #
+            legend=c("cluster 1", "cluster 2"), #
+            fill = c("red","green"))
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Clustering")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="clusters", #
+            legend=c("cluster 1", "cluster 2"), #
+            fill = c("red","green"))
+q()
+suppressPackageStartupMessages({#
+library(ggpubr)#
+library(knitr)#
+library(mosaic)#
+library(mgcv)#
+library(gratia)#
+library(ggplot2)#
+library(curvclust)#
+library(funHDDC)#
+library(clValid)#
+library(caret)#
+library(mclust)#
+library(NbClust)#
+library(MASS)#
+library(fda)#
+library(parallel)#
+library(pbmcapply)#
+library(matrixcalc)#
+library(pbapply)#
+library(fda.usc)#
+library(readxl)#
+library(tidyverse)#
+library(tidyfun)#
+library(mgcv)#
+library(pbmcapply)#
+library(factoextra)#
+library(gridExtra)#
+library(cowplot)#
+library(sasfunclust)#
+})#
+#
+load("datb.RData")#
+str(datb)#
+ ##### spaghetti plot of the data#
+datas<-datb#
+ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=as.integer(datas[,4]+2)[datas$id==1],type="l",#
+    ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Vt",main="spaghetti plot")#
+for(i in (1:75)) {#
+lines(datas[datas$id==i,2],datas[datas$id==i,3],col=as.integer(datas[,4]+2)[datas$id==i],lwd=2)#
+points(datas[datas$id==i,2],datas[datas$id==i,3],col=as.integer(datas[,4]+2)[datas$id==i],pch=20,cex=2)#
+}  #
+legend(x = "topright", box.col = "brown",#
+           bg ="yellow", box.lwd = 2 , title="Gold status", #
+            legend=c("Gold I_II", "Gold III_IV"), #
+            fill = c("red","green"))#
+rm(datas)#
+load("smoothdon.RData")#
+str(datas)#
+datas$id<-as.integer(datas$subject)#
+#
+##### spaghetti plot of the smoothed data#
+#
+mapping <- c("I_II" = 0, "III_IV" = 1)#
+datas$class<-mapping[datas$group]#
+#
+##### spaghetti plot of the data#
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,6]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="spaghetti plot")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,6]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="Gold status", #
+            legend=c("Gold I_II", "Gold III_IV"), #
+            fill = c("red","green"))#
+# Individus requis par Bernard "POUGET"#
+#
+# Clustering of smoothed data#
+#
+grid <- seq(0, 1, length.out = 150)#
+X<-matrix(0,nrow=75,ncol=150)#
+for (i in (1:75)) X[i,]=datas[datas$subject==as.character(i),3]#
+domain <- c(0, 1)#
+X_basis <- fda::create.bspline.basis(domain, norder = 4, nbasis = 20)#
+data <- list(X = t(X), grid = grid)#
+data <- list(X = t(X), grid = grid)#
+dim(data$X)#
+# X_basis<- create.bspline.basis(c(0,1), nbasis=200)#
+loglam         = seq(-10, -4, 0.25)#
+Gcvsave        = numeric()#
+for(i in 1:length(loglam)){#
+  fdPari  = fdPar(X_basis, Lfdobj=2, 10^loglam[i])#
+  Sm.i    = smooth.basis(data$grid, data$X, fdPari)#
+  Gcvsave[i] = sum(Sm.i$gcv)  #
+}#
+lambda_s=10^loglam[which.min(Gcvsave)]#
+fdPari  = fdPar(X_basis, Lfdobj=2,lambda_s)#
+data$X_fd<-smooth.basis(data$grid, data$X, fdPari)$fd#
+quartz() # checking this is the smoothed data displayed before#
+plot(data$X_fd) #
+clus_true<-rep("1",75)#
+for (i in (1:75)) clus_true[i]=datas[datas$subject==as.character(i),4][1]#
+clus_true<-as.factor(clus_true)#
+levels(clus_true)<-c(1,2)#
+clus_true<-as.integer(clus_true)#
+mod<-sasfclust(X=data$X,grid=data$grid,G=2,#
+lambda_l = 1,lambda_s =0.001,maxit = 20,q=20)#
+print(mod$clus$classes)#
+plot(mod)#
+#
+aux<-NULL#
+for (i in (1:75))  aux=c(aux,rep(mod$clus$classes[i],150))#
+datas$clust<-aux#
+#
+# spaghetti plot of the clusters#
+quartz()#
+ ymin<-min(datas$y); ymax<-max(datas$y)#
+plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+       ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="CLustering")#
+for(i in (1:75)) {#
+  lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1.2)#
+ }  #
+legend(x = "topright", box.col = "brown",#
+            bg ="yellow", box.lwd = 2 , title="clusters", #
+            legend=c("cluster 1", "cluster 2"), #
+            fill = c("red","green"))#
+#
+# Confusion matrix#
+#
+caret::confusionMatrix(as.factor(mod$clus$classes), as.factor(clus_true))#
+#
+# Confusion Matrix and Statistics#
+#
+#           Reference#
+# Prediction  1  2#
+#          1 25  4#
+#          2 18 28#
+#                Accuracy : 0.7067          #
+#                  95% CI : (0.5902, 0.8062)#
+#     No Information Rate : 0.5733          #
+#     P-Value [Acc > NIR] : 0.012164        #
+#                   Kappa : 0.4322          #
+#  Mcnemar's Test P-Value : 0.005578        #
+#             Sensitivity : 0.5814          #
+#             Specificity : 0.8750          #
+#          Pos Pred Value : 0.8621          #
+#          Neg Pred Value : 0.6087          #
+#              Prevalence : 0.5733          #
+#          Detection Rate : 0.3333          #
+#    Detection Prevalence : 0.3867          #
+#       Balanced Accuracy : 0.7282          #
+#        'Positive' Class : 1               #
+## Other tyupes of classification#
+#
+num_cluster_seq <- 2#
+#
+# Bouveyron (2011) ADAC -------------------------------#
+## FPCA scores funHDDC#
+#
+mod2<-funHDDC(data$X_fd, K=2, show=TRUE,#
+                threshold=c(.2, .5, .9),#
+                kmeans.control = list(nstart=100, iter.max = 100),#
+                nb.rep = 20)#
+mod3<-distance_ms(data = dat, num_cluster_seq = 2,#
+                  met="other", ncores = 1)#
+# mod2 adaptive funHDDC#
+cl_2 <- mod2$class#
+#
+## mod2 distance-based#
+cl_3 <- mod3$mod_opt_sil$clus#
+#
+####################################
+#
+library(pracma)#
+#
+clp<-rep(0,75) #
+for (i in (1:75)) {#
+   pSignal=datas[datas$id==i,3]#
+   peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+   if (length(peaks_found) == 0) clp[i]=0#
+   if (length(peaks_found) > 0) clp[i]=1#
+   lines(datas[datas$id==i,2],pSignal, type="l", col=clp[i]+8, lwd=1.2,lty=2)#
+}#
+#
+ quartz()#
+  ymin<-min(datas$y); ymax<-max(datas$y)#
+ plot(datas[datas$id==1,2],datas[datas$id==1,3],col=datas[datas$id==1,7]+2,type="l",#
+        ylim=c(ymin-20,ymax+20), xlab="Time",ylab="Smooth interpolation Vt",main="Overshoot")#
+ for(i in (1:75)) {#
+   lines(datas[datas$id==i,2],datas[datas$id==i,3],col=datas[datas$id==i,7]+2,lwd=1)#
+  }  #
+ legend(x = "topright", box.col = "brown",#
+             bg ="yellow", box.lwd = 2 , title="Overshoot", #
+             legend=c("without overshoot", "with overshoot"), #
+             fill = c("black","red"))#
+ clp<-rep(0,75) #
+ for (i in (1:75)) {#
+    pSignal=datas[datas$id==i,3]#
+    peaks_found <- findpeaks(diff(pSignal), nups=2, threshold=4)#
+    if (length(peaks_found) == 0) clp[i]=0#
+    if (length(peaks_found) > 0) clp[i]=1#
+    lines(datas[datas$id==i,2],pSignal, type="l", col=clp[i]+1, pch=20,lwd=1.2)#
+ }#
+#
+auxsig1<-NULL#
+auxsig2<-NULL#
+for (i in (1:75)) {#
+ if (clp[i]==0) auxsig1<-rbind(auxsig1,datas[datas$id==i,3])#
+ if (clp[i]==1) auxsig2<-rbind(auxsig2,datas[datas$id==i,3])#
+ }#
+mean1<-apply(auxsig1,2,mean)#
+mean2<-apply(auxsig2,2,mean)#
+points(datas[datas$id==i,2], mean1, col=1, pch=20, cex=2)#
+points(datas[datas$id==i,2], mean2, col=2, pch=20, cex=2)#
+#
+plot(diff(mean1),type="l", col=1, main="moyennes sur données lissées Delta Vt sans et avec OS")#
+lines(diff(mean2),type="l", col=2)
+caret::confusionMatrix(as.factor(mod$clus$classes), as.factor(clp+1))
+q()
+library(lubridate)#
+library(matlab)#
+library(wavethresh)#
+library(mgcv)#
+#
+data28<-read.csv("/Volumes/LACIE-WORK 1/discussion Bernard/overshoot-Bernerd/Cycle à Cycle GOLD 1/thomas 12-12-1956.csv", header=TRUE)#
+donthomas<-data.frame(time=data28$Temps,VT=data28$Vtcalculé)#
+don<-donthomas#
+don$time<-as.numeric(hm(donthomas$time))/3600#
+don$VT<-as.numeric(don$VT)#
+don<-don[-1,]#
+n<-512#
+plot(don$time[1:n],don$VT[1:n],type="l")
+data28<-read.csv("/Volumes/LACIE-WORK 1/discussion Bernard/overshoot-Bernerd/Cycle à Cycle GOLD 1/fichiers_csv/thomas.csv", header=TRUE)
+data28<-read.csv("/Volumes/LACIE-WORK 1/discussion Bernard/overshoot-Bernerd/Cycle à Cycle GOLD 1/fichiers_csv/thomas.csv", header=TRUE)#
+donthomas<-data.frame(time=data28$Temps,VT=data28$Vtcalculé)
+don$time<-as.numeric(hm(donthomas$time))/3600#
+don$VT<-as.numeric(don$VT)#
+don<-don[-1,]#
+n<-512#
+plot(don$time[1:n],don$VT[1:n],type="l")
+str(don)
+data28<-read.csv("/Volumes/LACIE-WORK 1/discussion Bernard/overshoot-Bernerd/Cycle à Cycle GOLD 1/thomas-12-12-1956.csv", header=TRUE)#
+donthomas<-data.frame(time=data28$Temps,VT=data28$Vtcalculé)
+don$time<-as.numeric(hm(donthomas$time))/3600
+don<-donthomas
+don$time<-as.numeric(hm(donthomas$time))/3600
+don<-don[-1,]#
+n<-512#
+plot(don$time[1:n],don$VT[1:n],type="l")
+donthomas$time
+as.numeric(hm(donthomas$time))
+as.numeric(hm(c("0:0",donthomas$time))
+)
+don$time<-as.numeric(c("0:0", hm(donthomas$time)))/3600
+as.numeric(hm(c("0:0",donthomas$time)))
+as.numeric(hm(c("0:0",donthomas$time)))/3600
+don<-donthomas#
+don$time<-as.numeric(hm(c("0:0",donthomas$time)))/3600
+q()
+require(sars)#
+require(gplsim)#
+require(ggplot2)#
+require(reshape2)#
+require(stargazer)#
+#
+myplot_si<-function (x, family = gaussian(), ylab = "mean", yscale = NULL, #
+    plot_data = FALSE) #
+{#
+    if (is.null(x$Znames)) {#
+        offset_fit <- family$linkinv((x$linear.predictors))#
+    }#
+    else {#
+        offset_fit <- family$linkinv((x$linear.predictors - x$gamma %*% #
+            t(x$model$z)))#
+    }#
+    UQ = cbind(x$model$a, matrix(offset_fit, ncol = 1))#
+    if (is.null(yscale)) {#
+        ylim = range(offset_fit)#
+    }#
+    else {#
+        ylim = yscale#
+    }#
+    plot(UQ[order(UQ[, 1]), ], col = "blue", type = "l", ylim = ylim, #
+        lty = 1, xlab = "estimated single index", ylab = ylab,lwd=1.2, main="fitted link function")#
+    if (plot_data) {#
+        graphics::points(UQ[order(UQ[, 1]), 1], (x$model$y)[order(UQ[, #
+            1])], pch = 20,col="grey")#
+    }#
+}#
+MakeSignal<-function(signalname="Corner",z){#
+  t<-(z-min(z))/diff(range(z))#
+  if (signalname=="Step") sig <- 0.2 + 0.6* (t > 1/3 & t <= 0.75)#
+  if (signalname=="Wave") sig <- 0.5 + (0.2*cos(4*pi*t)) + (0.1*cos(24*pi*t))#
+  if (signalname=="HardSine") sig <- 0.5 + 0.6*sin(2*t) * sin(2*pi*(2*t-1)^2+1)#
+  if (signalname=="Blip") sig <- (0.32 + (0.6*t) + 0.3*exp(-100*((t-0.3)^2)))*(t <= 0.8) +  (-0.28 + (0.6*t) + 0.3*exp(-100*((t-1.3)^2)))*(t > 0.8)#
+  if (signalname=="HeaviSine") {#
+         sig <- 4*sin(4*pi*t) - sign(t - .3) - sign(.72 - t) + 5#
+         sig <- (0.6/9)*sig + 0.2#
+         }#
+  if (signalname=="Angles") sig <- ((2*t + 0.5)*(t <= 0.15)) + #
+          ((-12*(t-0.15) + 0.8)*(t > 0.15 & t <= 0.2)) + #
+          0.2*(t > 0.2 & t <= 0.5) + #
+          ((6*(t - 0.5) + 0.2)*(t > 0.5 & t <= 0.6)) + #
+          ((-10*(t - 0.6) + 0.8)*(t > 0.6 & t <= 0.65)) + #
+          ((-0.5*(t - 0.65) + 0.3)*(t > 0.65 & t <= 0.85)) + #
+          ((2*(t - 0.85) + 0.2)*(t > 0.85))#
+  if (signalname=="Corner") {#
+      sig <- t#
+      sig[t <= 0.5] <- 62.387*10*t[t <= 0.5]^3*(1-4*t[t <= 0.5]^2);#
+      sig[0.5 < t & t <= 0.8] <- 62.387*3*(0.125-t[0.5 < t & t <= 0.8]^3)*t[0.5 < t & t <= 0.8]^4;#
+          sig[t > 0.8] <- 62.387*59.443*(t[t > 0.8]-1)^3;#
+          sig <- (0.6/(range(sig)[2]-range(sig)[1]))*sig+0.6;#
+  }#
+  return(sig)#
+}#
+#
+ramse<-function(x) sqrt(mean(x^2))#
+#
+par_out<-paste0("~/Desktop/","extra_results_", sep="","Corner")#
+if (!dir.exists(par_out)) {#
+   dir.create(par_out, recursive = TRUE)#
+}#
+set.seed(123)#
+n=150#
+p=3#
+niter=100#
+#
+X = matrix(stats::runif(p*n), ncol=p)#
+A=solve(t(X)%*%X)#
+u=runif(n, min = 2.5, max = 5.5)#
+true.theta=A%*%t(X)%*%u#
+a0 =  true.theta/sqrt(sum(true.theta^2))#
+z = X%*%a0#
+f=MakeSignal("Corner",z)#
+sigma = sqrt(var(f))/SNR#
+q = as.vector(f)#
+y=q + rnorm(length(q),0,sigma)#
+a0#
+Z<-NULL  # no partial part#
+gplsim_est <- gplsim(y,X,Z,family = gaussian, k=30)#
+glpsim_index <- sort(gplsim_est$model$a,index.return=TRUE)#
+#
+zz<-X%*% gplsim_est$theta; auxz<-sort(zz,index.return=TRUE)#
+fhat<-sars(zz,y)
+set.seed(123)#
+n=150#
+p=3#
+niter=100#
+SNR=4#
+#
+X = matrix(stats::runif(p*n), ncol=p)#
+A=solve(t(X)%*%X)#
+u=runif(n, min = 2.5, max = 5.5)#
+true.theta=A%*%t(X)%*%u#
+a0 =  true.theta/sqrt(sum(true.theta^2))#
+z = X%*%a0#
+f=MakeSignal("Corner",z)#
+sigma = sqrt(var(f))/SNR#
+q = as.vector(f)#
+y=q + rnorm(length(q),0,sigma)#
+a0#
+Z<-NULL  # no partial part#
+gplsim_est <- gplsim(y,X,Z,family = gaussian, k=30)#
+glpsim_index <- sort(gplsim_est$model$a,index.return=TRUE)#
+#
+zz<-X%*% gplsim_est$theta; auxz<-sort(zz,index.return=TRUE)#
+fhat<-sars(zz,y)
+q()
+library(readstata13)
+q()
+install.packages("feisr")
+q()
+?dwplot
+library(haven)
+?dwplot
+library(dotwhisker)
+?dwplot
+library(tidyverse);     # collection of all-around useful R packages#
+library(haven);         # for importing Stata datasets#
+library(dotwhisker);    # easy and beautiful regression plots, imho#
+library(readstata13);#
+auto_results <- read_dta("~/Desktop/R_Stata/auto_results.dta") %>% #
+    rename(term = var,#
+    estimate = coef,#
+    std.error = stderr) %>% #
+    filter(term != "_cons");#
+dwplot(auto_results);#
+ggsave("~/Desktop/R_Stata/auto_results.pdf", width = 5, height = 4);
+q()
+library(ggsave)
+library(gsave)
+library(dotwhisker)
+?ggsave
+?dwplot
+library(haven)
+help(package=haven)
+library(Statamarkdown)
+q()
+library(extrafont)
+fonts()
+loadfonts()
+pdf("plot_cm.pdf", family="CM Roman", width=5, height=5)#
+#
+plot(c(1,5), c(1,5), main="Made with CM fonts")#
+text(x=3, y=3, cex=1.5,#
+  expression(italic(sum(frac(1, n*'!'), n==0, infinity) ==#
+             lim(bgroup('(', 1 + frac(1, n), ')')^n, n %->% infinity))))#
+#
+dev.off()
+embed_fonts("plot_cm.pdf", outfile="plot_cm_embed.pdf")
+library(ggplot2)
+pdf("ggplot_cm.pdf", width=4, height=4)#
+p <- qplot(c(1,5), c(1,5)) +#
+  xlab("Made with CM fonts") + ylab("Made with CM fonts") +#
+  ggtitle("Made with CM fonts")#
+#
+# Equation#
+eq <- "italic(sum(frac(1, n*'!'), n==0, infinity) ==#
+       lim(bgroup('(', 1 + frac(1, n), ')')^n, n %->% infinity))"#
+#
+# Without the new fonts#
+p + annotate("text", x=3, y=3, parse=TRUE, label=eq)#
+#
+# With the new fonts#
+p + annotate("text", x=3, y=3, parse=TRUE, family="CM Roman", label=eq) +#
+    theme(text         = element_text(size=16, family="CM Roman"),#
+          axis.title.x = element_text(face="italic"),#
+          axis.title.y = element_text(face="bold"))#
+#
+dev.off()
+embed_fonts("ggplot_cm.pdf", outfile="ggplot_cm_embed.pdf")
+q()
+rm(list = ls())#
+library(genlasso)#
+library(splines)#
+library(AdaptFit)#
+library(AdaptFitOS)#
+require(stats)#
+require(graphics)#
+#
+n=200#
+set.seed(8)#
+sd=0.2#
+x=seq(0,1,length.out=n)#
+yy=-1+1.5*x+0.2*dnorm(x-0.6,0,0.02)#
+error=rnorm(n,mean=0,sd)#
+y=yy+error#
+plot(x,y)
+df1=c()#
+rss1=c()#
+sse1=c()#
+aic1=c()#
+for(k in 2:41)#
+{#
+fit1 <- smooth.spline(x,y,df=k)#
+df1[k]=k#
+rss1[k]=sum((fitted(fit1)-y)^2)/n#
+sse1[k]=sum((fitted(fit1)-yy)^2)/n#
+}#
+aic1=rss1+2*df1*sd^2/n
+aic1
+fit2=trendfilter(y,ord=3)#
+o=!duplicated(fit2$df)#
+df2=fit2$df[o]
+length(df2)
+length(o)
+dim(o)
+dim(fit2$fit)
+rss2=colMeans((fit2$fit-y)^2)[o]
+dim(y)
+length(y)
+dim((fit2$fit-y)^2)
+length(colMeans((fit2$fit-y)^2))
+length(colMeans((fit2$fit-y)^2)[o])
+q()
+library(BARS)
+install.packages("BARS")
+q()
+library(BARS)
+help(package=BARS)
+x<-c(1:110)#
+mu<-20*abs(exp(-x/100)*cos(x/5))#
+y<-rnorm(110,mu,1)
+library.dynamic("barsN","BARS",.lb.loc)
+library.dynam("barsN", "BARS", libname=.lib.loc)
+library.dynam("barsN", "BARS", libname="~Rlibs")
+library.dynam("barsN", "BARS")
+library.dynam("barsN", "BARS, .libPaths())
+)
+.libPaths()
+library.dynam("barsN", "BARS, libname="/Users/aantonia/Rlibs")
+)
+library.dynam("barsN", "BARS", libname="/Users/aantonia/Rlibs")
+library.dynam("barsN", "BARS, libname=.libPaths())
+library.dynam("barsN", "BARS", libname=.libPaths())
+dyn.load("/Users/aantonia/Rlibs/BARS/libs/barsN.so")
+dyn.load("~/Rlibs/BARS/libs/barsN.so")
+library(logslpine)
+library(logspline)
+dyn.load("~/Rlibs/BARS/libs/barsN.so")
+q()
+library(BARS)
+dyn.load("~/Desktop/work/AMPS/BARS/barsN/barsN.so",now=F)
+library(logspline)
+help(package=BARS)
+x<-c(1:110)#
+mu<-20*abs(exp(-x/100)*cos(x/5))#
+y<-rnorm(110,mu,1)
+out = bars(x,y,prior="uniform",priorparam=c(1,15),fits=TRUE)
+bars
+q()
+pkgpath<-"~/Rlibs/BARS"#
+cmdpath<-file.path(pkgpath,'exec/barsN.out')
+cmdpath
+q()
+library(BARS)
+dyn.load("~/Desktop/work/AMPS/BARS/barsN/barsN.so",now=F)
+library(logspline)
+x<-c(1:110)#
+mu<-20*abs(exp(-x/100)*cos(x/5))#
+y<-rnorm(110,mu,1)
+out = bars(x,y,prior="uniform",priorparam=c(1,15),fits=TRUE)
+out = bars(x,y)
+bars
+filed <- file("bars_points", "w")
+filed
+q()
+install.packages("fkbma")
+q()
+library(GeDS)
+help(package=GeDS)
+set.seed(123)#
+N <- 500#
+f_1 <- function(x) (10*x/(1+100*x^2))*4+4#
+X <- sort(runif(N, min = -2, max = 2))#
+# Specify a model for the mean of Y to include only a component#
+# non-linear in X, defined by the function f_1#
+means <- f_1(X)#
+# Add (Normal) noise to the mean of Y#
+Y <- rnorm(N, means, sd = 0.1)#
+#
+# Fit a Normal GeDS regression using NGeDS#
+(Gmod <- NGeDS(Y ~ f(X), beta = 0.6, phi = 0.995, Xextr = c(-2,2)))#
+#
+# Plot the final quadratic GeDS fit (red solid line)#
+# with its control polygon (blue dashed line)#
+plot(Gmod)
+q()
+install.packages("miscF")
+library(miscF)
+help(package=miscF)
+results <- curve.polynomial.rjmcmc(Y, X, lambda=1, l=2, l0=1)
+lines(sort(X), rowMeans(results$fitted.save), col="green",lwd=2)
+q()
+rm(list = ls())#
+library(genlasso)#
+library(splines)#
+library(AdaptFit)#
+library(AdaptFitOS)#
+require(stats)#
+require(graphics)#
+library(EbayesThresh)#
+library(wavethresh)#
+library(Rwave)#
+setwd("~/Desktop/work/AMPS/R_software")#
+source("mybases.r")#
+# source("/Users/anestisa/Desktop/new/newfiles/Marx/CourseSoftware/Software/R_software/mypnormal.r")#
+source("mypnormalb.r")#
+heavisine <- ts(scan("heavisine.txt"))#
+varcalib<-function(y,sigmc,m){#
+    d<-diff(y)#
+    estsig<-0#
+    n<-length(d)#
+    dvd<-rep(0,n)#
+    thresh<-rep(0,m)#
+    ds<-sort(abs(d))#
+    for(i in (1:m)){#
+    dstar<-diff(y+sigmc*rnorm(n+1))#
+    dstars<-sort(abs(dstar))#
+    for (c in (1:n)) dvd[c] <- (sum(dstars[1:c]^2) - sum(ds[1:c]^2))/(2*c)-sigmc^2#
+    thresh[i]<-which.max(dvd*(dvd<0))#
+    }#
+    cthresh<-mean(thresh)#
+    estsig<- sum(ds[1:cthresh]^2)/(2*c)#
+    return(list(c=cthresh,sigma=sqrt(estsig),dvd=dvd))#
+}#
+# y<-example.1()$y#
+yy<- heavisine#
+n<-length(yy)#
+x<-seq(0,1,length.out=n)#
+SNR<-3#
+sig<-sqrt(var(yy))/SNR#
+set.seed(8)#
+error=rnorm(n,mean=0,sig)#
+y<-yy+error#
+ydwt<-wd(y)#
+nlevs<-log(length(y),2)-1#
+vscale <- mad(accessD(ydwt, level = nlevs))#
+estsig<-varcalib(diff(y),vscale,30)$sigma#
+sd<-estsig#
+plot(x,y,cex=0.8,col="grey", main="Heavisine data",pch=20)#
+lines(x,yy,col="black", lwd=2)
+library(ggplot2)
+library(segmented)
+lm_fit <- lm(y ~ x)#
+#
+# Use segmented to estimate change-point#
+seg_fit <- segmented(lm_fit, seg.Z = ~x, psi = list(x = c(0.25,0.75)))
+reakpoint <- seg_fit$psi[c(1,2)]
+breakpoint <- seg_fit$psi[c(1,2)]
+breakpoint
+cat("Estimated discontinuity at x =", round(breakpoint, 3), "\n")
+x_grid <- seq(0, 1, length.out = 200)#
+y_pred <- predict(seg_fit, newdata = data.frame(x = x_grid))
+lines(x_grid, y_pred, col = "red", lwd = 2)#
+abline(v = breakpoint, col = "darkgreen", lty = 3)
+library(earth)#
+#
+# Fit MARS model#
+mars_fit <- earth(y ~ x)#
+#
+# Summary shows knot (hinge) locations#
+summary(mars_fit)#
+#
+# Predict on a grid#
+x_grid <- seq(0, 1, length.out = 200)#
+y_mars <- predict(mars_fit, newdata = data.frame(x = x_grid))#
+#
+# Plot#
+lines(x_grid, y_mars, col = "blue", lwd = 2)
+rm(list = ls())#
+library(genlasso)#
+library(splines)#
+library(AdaptFit)#
+library(AdaptFitOS)#
+require(stats)#
+require(graphics)#
+library(EbayesThresh)#
+library(wavethresh)#
+library(Rwave)#
+setwd("~/Desktop/work/AMPS/R_software")#
+source("mybases.r")#
+# source("/Users/anestisa/Desktop/new/newfiles/Marx/CourseSoftware/Software/R_software/mypnormal.r")#
+source("mypnormalb.r")#
+heavisine <- ts(scan("heavisine.txt"))#
+varcalib<-function(y,sigmc,m){#
+    d<-diff(y)#
+    estsig<-0#
+    n<-length(d)#
+    dvd<-rep(0,n)#
+    thresh<-rep(0,m)#
+    ds<-sort(abs(d))#
+    for(i in (1:m)){#
+    dstar<-diff(y+sigmc*rnorm(n+1))#
+    dstars<-sort(abs(dstar))#
+    for (c in (1:n)) dvd[c] <- (sum(dstars[1:c]^2) - sum(ds[1:c]^2))/(2*c)-sigmc^2#
+    thresh[i]<-which.max(dvd*(dvd<0))#
+    }#
+    cthresh<-mean(thresh)#
+    estsig<- sum(ds[1:cthresh]^2)/(2*c)#
+    return(list(c=cthresh,sigma=sqrt(estsig),dvd=dvd))#
+}#
+# y<-example.1()$y#
+yy<- heavisine#
+n<-length(yy)#
+x<-seq(0,1,length.out=n)#
+SNR<-3#
+sig<-sqrt(var(yy))/SNR#
+set.seed(8)#
+error=rnorm(n,mean=0,sig)#
+y<-yy+error#
+ydwt<-wd(y)#
+nlevs<-log(length(y),2)-1#
+vscale <- mad(accessD(ydwt, level = nlevs))#
+estsig<-varcalib(diff(y),vscale,30)$sigma#
+sd<-estsig#
+plot(x,y,cex=0.8,col="grey", main="Heavisine data",pch=20)#
+lines(x,yy,col="black", lwd=2)
+library(EBARS)#
+#
+dat <- data.frame(x, y)#
+#
+# Fit model#
+fit <- EBARS(y ~ x, data = dat,#
+             max_knots = 10,#
+             prior_K = "poisson",     # prior on number of knots#
+             runs = 20000, burnin = 5000)
+help(package=EBARS)
+library(EBARS)#
+#
+dat <- data.frame(x, y)#
+#
+# Fit model#
+fit <- ebars(y ~ x, data = dat,#
+             max_knots = 10,#
+             prior_K = "poisson",     # prior on number of knots#
+             runs = 20000, burnin = 5000)
+library(EBARS)#
+#
+dat <- data.frame(x, y)#
+#
+# Fit model#
+fit <- ebars(y ~ x, data = dat,#
+             c=0.3,times=2)
+library(EBARS)#
+#
+dat <- data.frame(x, y)#
+#
+# Fit model#
+fit <- ebars(y ~ x, #
+             c=0.3,times=2)
+library(EBARS)#
+#
+dat <- data.frame(x, y)#
+#
+# Fit model#
+fit <- ebars(x,y, #
+             c=0.3,times=2)
+names(fit)
+plot(fit)
+pred <- predict(fit, newdata = dat)
+source("~/Desktop/work/AMPS/BARS/barsN/barsN_Rwrapper")#
+dyn.load("~/Desktop/work/AMPS/BARS/barsN/barsN.so",now=F)#
+out<-barsN.fun(x,y,fits=T)#
+plot(x,y,cex=0.8,pch=20,col="grey", main="BarN fit")#
+lines(x,yy,type="l",col="black",lwd=2)#
+lines(x,out$postmeans,col="green",lwd=2)#
+lines(x,out$postmodes,col="red",lwd=2)
+source("~/Desktop/work/AMPS/BARS/barsN/barsN_Rwrapper")#
+dyn.load("~/Desktop/work/AMPS/BARS/barsN/barsN.so",now=F)#
+out<-barsN.fun(x,y,fits=T)#
+plot(x,y,cex=0.8,pch=20,col="grey", main="BarN fit")#
+lines(x,yy,type="l",col="black",lwd=2)#
+lines(x,out$postmeans,col="green",lwd=2)#
+lines(x,out$postmodes,col="red",lwd=2)
+q()

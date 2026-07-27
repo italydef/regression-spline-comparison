@@ -1,0 +1,22 @@
+function logl = MultBCLik(theta,X) ;
+
+%	Computes the profile log-likelihood for the multivariate
+%	Box-Cox model
+
+if size(X,2) > size(X,1) ;
+	X = X' ;
+end ;
+if size(theta,2) > size(theta,1) ;
+	theta = theta' ;
+end ;
+for i=1:length(theta) ;
+	Xtheta(:,i) = boxcox(X(:,i),theta(i)) ;
+end ;
+
+mu = mean(Xtheta) ;
+n = size(X,1) ;
+Xc = Xtheta - ones(n,1)*mu ;
+sigma = Xc'*Xc/n ;
+logl = (n/2)*log(det(sigma)) - sum(log(X))*(theta-1) ;
+
+

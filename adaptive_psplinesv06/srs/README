@@ -1,0 +1,17 @@
+This is the directory of the matlab functions that I have
+written or have gotten from other statistician.
+
+There are "general" functions in this directory and special
+functions in the following subdirectories.
+
+ebbs - local bandwidth selection for local polynomial regression
+
+lpoly - local polynomial regression
+
+marron - from Steve Marron
+
+ola - from Ola Hossjer
+
+old - old files that I am not using but may need in the future
+
+srs - smoothed (i.e., penalized) regression splines

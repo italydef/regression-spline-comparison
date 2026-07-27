@@ -1,0 +1,23 @@
+function g = grad2(fun,beta,x,delta,string) ;
+% Computes the grad of 'fun'
+% Usage:  g = grad2(fun,beta,x,delta,string) ;
+%
+%  Last edited:  March 28, 1996
+%
+
+eval(string) ;
+m = rows(beta) ;
+if m== 1 ; beta = beta' ; end ;
+m=rows(beta) ;
+
+ii = eye(m) ;
+fbase = eval(fun) ;
+betaold = beta ;
+n = rows(fbase) ;
+
+g=zeros(n,m) ;
+for i = 1:m ;
+beta = betaold + delta * ii(:,i) ;
+g(:,i) = (eval(fun) - fbase) / delta ;
+end ;
+

@@ -1,0 +1,13 @@
+n = 101 ;
+x = linspace(0,10,n)' ;
+y = 5*sin(x) + randn(n,1) ;
+fit = PsplineDR03(x,y) ;
+
+tic
+band = Pspglband01(fit,1,.05) ;
+toc
+df = fit.dffit(fit.imin) ;
+
+kapprox = norminv( (1+.95^(1/df)) /2 ) 
+plot(x,y,'*',band.xgrid,band.mhat,band.xgrid,band.LL,'--',band.xgrid, ...
+	band.UL,'--') ;

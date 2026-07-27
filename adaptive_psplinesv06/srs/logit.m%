@@ -1,0 +1,9 @@
+function y = logit(x);
+% Returns the logit function % Use: y = logit(x)
+%
+%	USE: y = logit(x);
+%
+%		OUTPUT
+%	y = log(x/(1-x))
+%
+y = log( x./(1-x) );

@@ -1,0 +1,9 @@
+function [f,kurtosis] = boxtiao(x,q,sigma) ;
+% Box-Tiao density function
+% 75 percentiles:	.674 for q=2
+%			1.38 for q=1
+%			11.25 for q=1/2	
+eta = 2 * log( (1/q) * 2^(1+1/q) * gamma(1/q) ) ;
+f = exp(   -.5*(abs(x./sigma).^q+eta)   ) ./ sigma;
+
+kurtosis = gamma(5/q)*gamma(1/q)/(gamma(3/q)^2) ;

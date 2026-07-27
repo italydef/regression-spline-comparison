@@ -1,0 +1,170 @@
+function  fit = srsBayEiv01(w,y,sw2,nw,degree,nknots,niter);
+%
+%	Gibbs sampler Bayesian analysis of a univariate regression
+%	spline
+%
+%	USAGE:  fit = srsBayEiv01(w,y,sw2,nw,degree,nknots,niter);
+%
+%
+%
+%		INPUT - REQUIRED
+%	w = independent variable (average of replicates) (univariate)
+%	y = response (same length as w)
+%	sw2 = sample variance of independent variable replicates
+%	nw = number of replicates of the independent variable
+%
+%		INPUT - OPTIONAL
+%	degree = degree of the spline (default is 2)
+%	nknots = number of knots (default 20)
+%	niter  = number of iterations of the Gibbs sampler (default is 2000)
+%	
+%		OUTPUT
+%	Returns a structure "fit" with the following components:
+%
+% 	fit = struct('beta',beta,'wmatrix',wm,'sigma2e',sigma2e,
+%	'sigma2b',sigma2b,'knots',knots,'wgrid',wgrid,
+%	'yhatgrid',yhatgrid, 'meanyhatgrid',meanyhatgrid, 
+%	'varyhatgrid',varyhatgrid) ;
+
+%	beta	= niter realizations of beta
+%	wmatrix = wm = design matrix for the spline
+%	sigma2e = niter realizations of sigma2e
+%	sigma2b = niter realizations of sigma2b
+%	knots 	= knots used in the spline (these are fixed and do not
+%			vary between realizations)
+%	wgrid	= grid of 100 points from min(w) to max(w)
+%	yhatgrid = niter realization of yhat on wgrid
+%	meanyhatgrid	= mean of yhatgrid
+%	varyhatgrid	= variance of yhatgrid
+%	varmeanyhatgrid = estimate of var(E(yhatgrid|var components))
+%	meanvaryhatgrid = estimate of E(var(yhatgrid|var components))
+%
+%
+%	Last Edit: 7/17/2001
+%
+
+n = length(w) ;
+
+if (nargin < 7 | isempty(niter) == 1) ;
+	niter = 2000 ;
+end ;
+
+if (nargin < 6 | isempty(nknots) == 1) ;
+	nknots = 20 ;
+end ;
+
+if (nargin < 5 | isempty(degree) == 1) ;
+	degree = 2 ;
+end ;
+
+if length(nw) == 1 ;
+	nw = nw *ones(n,1) ;
+end ;
+
+boundstab = 0 ;
+knots = quantileknots(w,nknots,boundstab) ;
+fitprel = PsplineDR02(w,y,degree,nknots,[],boundstab);
+x =  w ;
+sigmau2 = (nw-1)'*sw2  /  (sum(nw - 1)) ;
+sigmae2 = fitprel.sigma2hat ;
+GAMMA =fitprel.penwt(fitprel.imin) ;
+mux = nw'*w / sum(nw) ;
+sigmax2 = sum( ((w-mux).^2)'* nw )   /  (sum(nw) - 1)   - sigmau2 ;
+sigmax2 = max( [0 sigmax2] ) ;
+
+
+
+
+Ae = .01 ;
+Be = .01 ;
+Au = .01 ;
+Bu = .01 ;
+Ag = .01 ;
+Bg = .01 ;
+t2x = 1000 ;
+Ax = .01 ;
+Bx = .01 ;
+
+SSW = sum( sw2.*(nw-1) ) ;
+
+id = [zeros(1,degree+1)  ones(1,nknots)] ;
+D = diag(id) ;
+
+beta=zeros(1+degree+nknots,niter) ;
+yhat=zeros(n,niter) ;
+betamean = beta ;
+sigma2e = zeros(1,niter) ;
+hat = zeros(n,niter) ;
+xstore = yhat ;
+sigmaustore= zeros(1,niter) ;
+GAMMAstore = zeros(1,niter) ;
+sigmaestore= zeros(1,niter) ;
+muxstore = zeros(1,niter) ;
+for iter=1:niter;
+
+
+xm = powerbasis01(x,degree,knots) ;
+xx = xm'*xm ;
+alpha = sigmae2*GAMMA ;
+betamean(:,iter) = (xx+alpha*D)\(xm'*y) ;
+
+covbeta = sigmae2*inv(xx+alpha*D) ;
+
+beta(:,iter) =  betamean(:,iter) + sqrtm(covbeta)*randn(1+degree+nknots,1)   ;
+
+yhat(:,iter) = xm*beta(:,iter) ;
+
+
+sigmae2 = gamrnd( Ae+n/2, 1/( Be + (1/2)*sum((y-yhat(:,iter)).^2) )  ) ;
+sigmae2 = 1/sigmae2 ;
+sigmaestore(iter) = sqrt(sigmae2) ;
+
+paru1=  Au+sum(nw)/2 ;
+paru2 = 1/(Bu + (SSW + sum(((w-x).^2).*nw))/2 ) ;
+
+sigmau2 = gamrnd(paru1,paru2 ) ;
+sigmau2 = 1/sigmau2 ;
+sigmaustore(iter) = sqrt(sigmau2) ;
+
+parG1 = Ag+nknots/2 ;
+parG2 = 1/(  Bg + (1/2)* beta(:,iter)'*D*beta(:,iter) ) ;
+
+GAMMA  = gamrnd(parG1,parG2); 
+GAMMAstore(iter) = GAMMA ;
+
+mux = (sum(x)/sigmax2 + mux/t2x)/(n/sigmax2+1/t2x) ...
+	+ (1/sqrt(n/sigmax2+1/t2x)) * randn(1,1) ;
+muxstore(iter) = mux ;
+
+sigmax2 = gamrnd(Ax+n/2, 1/( Bx + sum((x-mux).^2)/2 )  ) ;
+sigmax2 = 1/sigmax2 ;
+
+xtest = x + 2*sqrt(sigmau2./nw).*randn(n,1) ;
+unif = rand(n,1) ;
+
+logpdf1 = (   nw./(2*(sigmau2)).*((w-x).^2)  ...
+	+  (y-yhat(:,iter)).^2./(2*sigmae2) ...
+	+ (x-mux).^2./(2*sigmax2) ) ;
+
+xmtest = powerbasis01(xtest,degree,knots) ;
+
+logpdf2 = ( nw./(2*(sigmau2)).*((w-xtest).^2)  ...
+	+  (y-xmtest*beta(:,iter)).^2./(2*sigmae2) ...
+	+ (xtest-mux).^2./(2*sigmax2) ) ;
+ratio = min(  [ones(n,1) exp(logpdf1 - logpdf2)]'  )' ;
+
+ind = (unif < ratio) ;
+x = x.*(1-ind) + xtest.*ind ;
+
+xstore(:,iter) = x ;
+end ;
+
+xgrid = linspace(min(w),max(w),50)' ;
+xmgrid = powerbasis01(xgrid,degree,knots) ;
+avebeta=mean(betamean(:,round(niter/3):niter)')' ;
+mhat = xmgrid*avebeta ;
+
+fit = struct('beta',beta,'yhat',yhat,'xstore',xstore,'sigmaustore', ...
+	sigmaustore,'GAMMAstore',GAMMAstore,'sigmaestore',sigmaestore, ...
+	'muxstore',muxstore,'avebeta',avebeta,'xgrid',xgrid, ...
+	'mhat',mhat) ;

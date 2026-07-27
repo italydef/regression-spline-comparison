@@ -1,0 +1,33 @@
+% program to test regspline
+%
+n = 200 ;
+power = 6 ;
+freq = 8 ;
+
+degree = 4 ;
+maxknots = 10 ;
+ism = 1 ;
+if ism == 1 ;
+	x=rand(n,1) ;
+	x = sort(x) ;
+	y= sin(freq*x.^power) + randn(n,1)/4 ;
+ytrue= sin(freq*x.^power) ;
+
+tic
+	[yhat,beta,nknots,knots,sigma2hat] = regspline(x,y,degree,maxknots) ;
+
+toc
+end 
+subplot(2,1,1) ;
+plot(x,y,'*',x,yhat,x',ytrue,'r-')
+
+grid 
+nknots
+
+disp(['sigmahat = ' num2str(sqrt(sigma2hat))]) ;
+order = 2
+df =  diffspline(x,knots,beta,degree,order) ;
+
+subplot(2,1,2) ;
+plot(x,df) 
+grid

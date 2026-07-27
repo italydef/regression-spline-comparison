@@ -1,0 +1,205 @@
+function  srsloc = srslocal(x,y,degree,nknots,nsubknots,penwt,niter,boundstab) ;
+%
+%	Smoothed regression spline with a locally varying penalty weight
+%
+%  	USAGE: srsloc = srslocal(x,y,degree,nknots,nsubknots,penwt,niter, ...
+%		boundstab) ;
+%
+%
+%		INPUT (required)
+%	x = independent variable (n by 1)
+%	y = dependent variable (n by 1)
+%
+%		INPUT (optional)
+%	degree = spline degree (default = 2)
+%	nknots = number of knots of the spline (default is 20)
+%	nsubknots = number of subknots (default is round(nknots/4))
+%	penwt = vector of possible penalty weights 
+%		(default = logspace(-10,10,51)
+%	niter = number of iterations when searching for local penalty weight
+%		that minimizers gcv (default is 1)
+%	boundstab =  boundary stability parameter (default = 0)
+%
+% 		RETURNS
+%	Returns a structure with the following fields -
+%
+%	yhatglobal 	= fit with global smoothing parameter
+%	yhatloc  	= fit with locally varying smoothing parameter
+%	alpha 		= log of smoothing parameter at each subknot
+%	alpha0		= log of global smoothing parameter 
+%	penwt = possible values of the global smoothing parameter
+%	postvarbetagl = posterior variance of beta with global penwt
+%	postvaryhatgl = posterior variance of yhat with global penwt
+%	postvarbetaloc = posterior variance of beta with local penwt
+%	postvaryhatloc = posterior variance of yhat with local penwt
+%	ulimitloc = upper Bayesian limit for local fit
+%	llimitloc = lower Bayesian limit for local fit
+%	ulimitgl = upper Bayesian limit for global fit
+%	llimitgl = lower Bayesian limit for local fit
+%	knots
+%	subknots
+%	
+%	The local varying
+%	smoothing parameter varies independently at each subknot
+%	and is determined by spline interpolation between subknots
+%
+%
+%	Last edit: 7/8/99
+%
+%	Calls: srsknots, srsfixedpen, quantileknots
+
+n=size(x,1) ;
+
+if nargin < 8 ;
+	boundstab = 0 ;
+end ;
+
+if nargin < 7 ;
+	niter = 1 ;
+end ;
+
+if nargin < 6 ;
+	penwt = logspace(-10,10,51) ;
+end ;
+
+
+if nargin < 4 ;
+	nknots = 20 ;
+end ;
+
+if nargin < 5 ;
+	nsubknots = max( [2 round(nknots/4)] ) ;
+end ;
+
+if nargin < 3 ;
+	degree = 2 ;
+end ;
+
+if size(penwt,1) == 1 ;
+	penwt = penwt'; 
+end ;
+
+
+xunique = unique(x) ;
+
+if length(xunique) < 2*nknots ;
+nknots = round(length(xunique)/2) ;
+nsubknots = min( [nsubknots round(length(xunique)/4)] ) ;
+' WARNING: number of knots reduced since length(xunique) < 2*nknots ' 
+end ;
+
+knots = quantileknots(xunique,nknots,boundstab) ;
+
+xunique2 = xunique(  (xunique>knots(1)) & (xunique<knots(nknots))  ) ;
+
+subknots = quantileknots(xunique2,nsubknots-2) ;
+subknots = [knots(1); subknots; knots(nknots)] ;
+subknots(nsubknots) = knots(nknots) ;
+
+[yhatgl,betagl,gcv,imingl,df,sigma2hatgl,xx,xy,xm,postvarbetagl,...
+	postvaryhatgl,dfresgl]= srsknots(x,y,degree,knots,penwt) ; 
+%%%%%%%%%%	get global smoothing parameter	%%%%%%%%%%
+
+
+
+ 
+
+clear gcv ;
+
+imin = min(imingl) ;
+				
+alpha0 = log(penwt(imingl)) ;
+alpha = alpha0*ones(nsubknots,1) ;
+grid = linspace(-4,4,15) ;
+ngrid = length(grid) ;
+ident = eye(length(alpha)) ;
+
+	for iter = 1:niter ;
+		for i=1:nsubknots ;
+			for j=1:ngrid ;
+			alpha2 = alpha + grid(j)*ident(:,i) ;
+			gcv(j) = srsfixedpen(alpha2,x,y,knots,subknots,...
+			xx,xy,xm,sigma2hatgl,degree) ;
+			end ;
+		imin = min(find(gcv==min(gcv))) ;
+		alpha = alpha + grid(imin)*ident(:,i) ;
+		end ;
+	end ;	
+	
+[gcv,yhatloc,betaloc,asr,df,postvarbetaloc,dfres] = ...
+	srsfixedpen(alpha,x,y,knots,subknots,...
+	xx,xy,xm,sigma2hatgl,degree);
+
+I = eye(length(alpha)) ;
+yhatder = zeros(n,length(alpha)) ;
+
+for k = 1:length(alpha) ;
+	[gcvdum,yhatchange] = ...
+		srsfixedpen(alpha + .1*I(:,k),x,y,knots,subknots,...
+		xx,xy,xm,sigma2hatgl,degree);
+yhatder(:,k) = 10*(yhatloc - yhatchange) ;
+end ;
+
+sigma2hatloc = sum((y-yhatloc).^2) ./ dfres ;
+postvaryhatloc_uncorr = diag(xm*postvarbetaloc*xm') ;
+mse_ratio = (mean(postvaryhatgl)/mean(postvaryhatloc_uncorr)) ;
+
+postvaryhatloc =  mse_ratio * postvaryhatloc_uncorr ;
+
+ulimitloc = yhatloc + 2*sqrt(postvaryhatloc) ;
+llimitloc = yhatloc - 2*sqrt(postvaryhatloc) ;
+ulimitgl = yhatgl + 2*sqrt(postvaryhatgl) ;
+llimitgl = yhatgl - 2*sqrt(postvaryhatgl) ;
+
+
+xmder = xm ;
+xmder(:,1) = 0*xmder(:,1) ;
+for i = 2:degree+1 ;
+xmder(:,i) = (i-1)*xm(:,i).^( (i-2)/(i-1)  ) ;
+end ;
+
+for i=degree+2:degree+1+nknots ;
+xmder(:,i) = degree*xm(:,i).^(  (degree-1)/degree ) ;
+end ;
+
+
+yhatderloc = xmder*betaloc ;
+%id = diag([zeros(1,degree+1)  ones(1,nknots)]) ;
+%b = inv(xx + penwt(imin)*id) ;
+
+postvaryhatderloc = (xmder.*(xmder*postvarbetaloc))*ones(length(betaloc),1) ;
+ulimitderloc = yhatderloc + 2*sqrt(postvaryhatderloc) ;
+llimitderloc = yhatderloc - 2*sqrt(postvaryhatderloc) ;
+
+
+
+
+srsloc = struct('yhatgl',yhatgl, ...
+	'yhatloc',yhatloc, ...
+	'alpha',alpha, ...
+	'betagl',betagl, ...
+	'betaloc',betaloc, ...
+	'alpha0',alpha0, ...
+	'sigma2hatgl',sigma2hatgl, ...
+	'sigma2hatloc', sigma2hatloc, ...
+	'postvarbetagl',postvarbetagl, ...
+	'postvaryhatgl',postvaryhatgl, ...
+	'postvarbetaloc',postvarbetaloc, ...
+	'postvaryhatloc',postvaryhatloc, ...
+	'ulimitloc',ulimitloc, ...
+	'llimitloc',llimitloc, ...
+	'ulimitgl',ulimitgl, ...
+	'llimitgl',llimitgl, ...
+	'knots',knots, ...
+	'subknots',subknots, ...
+	'imingl',imingl, ...
+	'yhatderloc',yhatderloc, ...
+	'postvaryhatderloc',postvaryhatderloc, ...
+	'ulimitderloc',ulimitderloc, ...
+	'llimitderloc',llimitderloc, ...
+	'gcv',gcv , ...
+	'yhatder',yhatder, ...
+	'mse_ratio',mse_ratio , ...
+	'postvaryhatloc_uncorr', postvaryhatloc_uncorr) ;
+
+

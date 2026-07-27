@@ -1,0 +1,98 @@
+function fit = srsauto01(x,y,degree,penwt,maxnknots,boundstab, ...
+	smooth_spline_penalty,gcvfact) ;
+%
+%	Calls srs with successively larger values of nknots.
+%	Stops when gcv is not reduced by at
+%	least 2%.
+%	
+%	Values of nknots tried:  5, 10, 20, 40, 80, 120
+%
+%
+%		INPUT (required)
+%	x = independent variable (n by 1)
+%	y = dependent variable (n by 1)
+%
+%		INPUT (optional)
+%	degree = spline degree (default = 2)
+%	penwt = vector of possible penalty weights 
+%		(default = logspace(-10,10,51)
+%	maxnknots = maximum number of knots
+%	boundstab =  boundary stability parameter (default = 0)
+%
+% 		RETURNS
+%	Returns a structure with the following fields -
+%
+%	fit1 = fit with chosen knots
+%	nknotschosen = number of knots chosen
+%
+%
+%
+%	Last edit: 8/16/2001
+%
+%	Calls: PsplineDR03
+
+if (nargin < 8 | isempty(gcvfact) == 1 ) ;
+	gcvfact = 1 ;
+end ;
+
+if (nargin < 7 | isempty(smooth_spline_penalty) == 1 ) ;
+	smooth_spline_penalty = 0 ;
+end ;
+
+
+if (nargin < 6 | isempty(boundstab) == 1 );
+	boundstab = 0 ;
+end ;
+
+if (nargin < 5 | isempty(maxnknots) == 1) ;
+	maxnknots = 120 ;
+end ;
+
+if (nargin < 4 | isempty(penwt) == 1) ;
+	penwt = logspace(-10,10,51) ;
+end ;
+
+if (nargin < 3 | isempty(degree) == 1) ;
+	degree = 2 ;
+end ;
+
+
+gcvfact
+
+n = length(x) ;
+nu = length(unique(x)) ;
+
+nknots = [5 10 20 40 80 120]' ;
+nknots = nknots( (nknots < min([maxnknots+1  nu - degree - 1]) ) ) ;
+
+
+fitold = PsplineDR03(x,y, ...
+	struct('degree',degree,'nknots',nknots(1),'smooth_spline_penalty',...
+	smooth_spline_penalty,'gcvfact',gcvfact) ) ;
+
+i = 2 ;
+
+while i < 1 + length(nknots) ;
+
+
+fit1 = PsplineDR03(x,y, ...
+	struct('degree',degree,'nknots',nknots(i),'smooth_spline_penalty',...
+	smooth_spline_penalty,'gcvfact',gcvfact) ) ;
+
+nknotschosen = nknots(i) ;
+if fit1.gcv(fit1.imin) < .98*fitold.gcv(fitold.imin) ;
+	fitold = fit1 ;
+	i=i+1 ;
+	else ;
+		if fit1.gcv(fit1.imin) > fitold.gcv(fitold.imin) ;
+		 	fit1 = fitold ;
+			nknotschosen = nknots(i-1) ;
+		end ;
+
+	i = 1 + length(nknots) ;
+end ;	%	End "if fit.gcv ... "
+
+end ;	%	End "while i < i + ..."
+fit = struct('fitauto',fit1,'nknotschosen',nknotschosen) ;
+
+

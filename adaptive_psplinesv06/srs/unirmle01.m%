@@ -1,0 +1,116 @@
+function  fit = unirmle01(x,y,param);
+%
+%	Computes a univariate P-spline with the smoothing
+%	parameter chosen by RMLE
+%
+%	Last edit: 7/23/2001
+%
+n  = size(x,1) ;
+
+
+if nargin < 3 ;
+	param = '' ;
+end ;
+
+if isfield(param,'degree') == 0 ;
+	degree = 2 ;
+else ;
+	degree = param.degree ;
+end ;
+
+
+if isfield(param,'ML') == 0 ;
+	ML = 1 ;	%	ML = 1 gives MLE (otherwise get REML)
+else ;
+	ML = param.ML ;
+end ;
+
+
+if isfield(param,'boundstab') == 0 ;
+	boundstab = 0 ;
+else ;
+	boundstab = param.boundstab ;
+end ;
+
+if isfield(param,'nknots') == 0 ;
+	nknots =  min([floor(.3*n), 20]) ;
+else ;
+	nknots = param.nknots ;
+end ;
+
+
+if isfield(param,'knots') == 0 ;
+	knots =  quantileknots(x,nknots,boundstab) ;
+else ;
+	knots = param.knots ;
+end ;
+
+
+
+
+
+xm = powerbasis01(x,degree,knots) ;
+xm1 = xm(:,1:(1+degree)) ;
+xm2 = xm(:,(2+degree):size(xm,2)) ;
+xmxm = xm'*xm ;
+xm1xm1 = xm1'*xm1 ;
+xm1xm2 = xm1'*xm2 ;
+xm2xm2 = xm2'*xm2 ;
+D = diag([zeros(1+degree,1) ; ones(nknots,1)]) ;
+
+nlambda = 100 ;
+
+lambda = logspace(-10,10,nlambda) ;
+
+eyye = eye(nknots) ;
+
+lrmle = zeros(nlambda,1) ;
+sige2 = lrmle ;
+sigb2 = sige2 ;
+betab = zeros(nlambda,1+degree+nknots) ;
+
+for i=1:nlambda ;
+
+betab(i,:) = ((xmxm+lambda(i)*D)\(xm'*y))' ;
+beta = betab(i,1:(degree+1))' ;
+
+res = (y-xm1*beta) ;
+resz=res'*xm2 ;
+
+
+
+if ML == 0 ;
+
+	sige2(i) = ( res'*res - resz*inv(lambda(i)*eyye+xm2xm2) *resz' )/ (n-degree-1) ;
+	lrmle(i) = -.5* ( (n-degree-1)*log(sige2(i)) + (n-degree-1) ...
+ 	+ log(det( lambda(i)*eyye + xm2xm2 )) - nknots*log(lambda(i)) ...
+
+	+ log(det(xm1xm1 - xm1xm2*inv(lambda(i)*eyye + xm2xm2)*xm1xm2') ) ) ;
+
+
+
+elseif ML == 1 ;
+	sige2(i) = ( res'*res - resz*inv(lambda(i)*eyye+xm2xm2) *resz' )/n ;
+	lrmle(i) = -.5*(n*log(sige2(i)) + n ...
+	+ log(det( lambda(i)*eyye + xm2xm2 )) - nknots*log(lambda(i)) ) ;
+end ;
+
+
+sigb2(i) = sige2(i) ./ lambda(i) ;
+end ;
+
+imax = max(find(lrmle==max(lrmle))) ;
+logratio = lrmle(imax) - lrmle(nlambda) ;
+
+p_rmle = .5*(1 - chi2cdf(2*logratio,1))  ;
+
+lambdaOP = lambda(imax) ;
+betabOP = ((xmxm+lambdaOP*D)\(xm'*y))' ;
+betaOP = betabOP(1:(degree+1))' ;
+mhat = xm*betabOP' ;
+
+fit =struct('lambda',lambda,'lrmle',lrmle,'mhat',mhat,'imax',imax, ...
+	'logratio',logratio,'lrmle_max',lrmle(imax) , ...
+	'sigb2',sigb2,'p_rmle',p_rmle,'knots',knots,'sige2vect',sige2) ;
+
+

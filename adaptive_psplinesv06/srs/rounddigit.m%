@@ -1,0 +1,3 @@
+function y = rounddigit(x,d) ;
+% Rounds the elements of x to d digits after the decimal.
+y = round(10^d * x)/10^d ;

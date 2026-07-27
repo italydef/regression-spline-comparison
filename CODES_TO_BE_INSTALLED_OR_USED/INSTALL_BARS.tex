@@ -1,0 +1,232 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{codebg}{gray}{0.96}
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  framerule=0pt,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  xleftmargin=6pt,
+  xrightmargin=6pt,
+  aboveskip=8pt,
+  belowskip=8pt,
+}
+
+\title{\textbf{Building \texttt{BarsN} and \texttt{BarsP} from source\\
+\large An operating-system--independent guide}}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{The one idea to remember}
+
+\texttt{BARS} ships C source that must be compiled into two products per method:
+a stand-alone \emph{executable} (\texttt{barsN.out}, \texttt{barsP.out}) and a
+\emph{shared library} (\texttt{barsN.so}, \texttt{barsP.so}). Compiled files are
+tied to one operating system \emph{and} one CPU architecture. The portable rule,
+true on every platform, is therefore:
+
+\begin{quote}
+\textbf{Copy the sources, not the binaries. Rebuild on each machine.}
+\end{quote}
+
+Never reuse a \texttt{*.o}, \texttt{*.so}, or \texttt{*.out} produced on a
+different machine: an object of the wrong architecture loaded by R is exactly the
+``incompatible architecture'' / ``found $\ldots$ required $\ldots$'' error. The
+same source tree, compiled locally, works everywhere.
+
+\section{What is platform-specific and what is not}
+
+Almost every correction the code needs is about \emph{modern C compilers and
+portability}, not about a particular CPU or OS. Only two things truly vary by
+platform: the toolchain you install, and the flags that name the system BLAS/LAPACK.
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Aspect} & \textbf{Same everywhere?} & \textbf{Note} \\
+\midrule
+\texttt{malloc.h}$\rightarrow$\texttt{stdlib.h} edit & yes & portability fix \\
+Relaxed compiler flags        & yes & needed by clang 15+ / gcc 14+ \\
+Two build products (.out, .so)& yes & \texttt{make} + \texttt{R CMD SHLIB} \\
+File layout (exec/, libs/)    & yes & package convention \\
+\midrule
+C compiler                    & \textbf{no} & clang / gcc / Rtools \\
+BLAS \& LAPACK link flags      & \textbf{no} & resolved via \texttt{R CMD config} \\
+CPU architecture of output    & \textbf{no} & must match your R build \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The trick that makes the build portable is to stop hard-coding library names and
+let \textbf{R itself} report the correct BLAS/LAPACK/compiler for the current
+machine (Section~\ref{sec:build}).
+
+\section{Step 0 --- Prerequisites}
+
+You need a C compiler and a build of R whose architecture matches the machine.
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{macOS:} Xcode Command Line Tools --- \texttt{xcode-select --install}
+        (provides \texttt{clang}).
+  \item \textbf{Linux:} the compiler and R headers, e.g.\ Debian/Ubuntu
+        \texttt{sudo apt-get install build-essential r-base-dev}; Fedora/RHEL
+        \texttt{sudo dnf install gcc make R-devel}.
+  \item \textbf{Windows:} \textbf{Rtools} matching your R version, on the build PATH.
+\end{itemize}
+
+Confirm the compiler and R agree on architecture before building:
+
+\begin{lstlisting}
+cc --version        # or: gcc --version
+R --version         # architecture here must match the compiler
+\end{lstlisting}
+
+On Apple Silicon, \texttt{R --version} must report \texttt{aarch64}; if it says
+\texttt{x86\_64} you are running the Intel build under Rosetta and the output will
+be built for the wrong architecture.
+
+\section{Step 1 --- Bring the corrected sources across}
+
+Copy the \texttt{barsN} and \texttt{barsP} source folders. \textbf{First remove any
+compiled products that travelled with them}, since they belong to another machine:
+
+\begin{lstlisting}
+cd barsN && rm -f *.o *.so *.out
+cd ../barsP && rm -f *.o *.so *.out
+\end{lstlisting}
+
+If you are starting from pristine upstream sources, apply the one portability edit
+that BARS needs --- \texttt{<malloc.h>} does not exist on all systems, and
+\texttt{<stdlib.h>} provides the same declarations portably:
+
+\begin{lstlisting}
+# in both barsN/ and barsP/, in logspline.c (line 3):
+#   change   #include <malloc.h>
+#   to       #include <stdlib.h>
+\end{lstlisting}
+
+This edit is correct on every operating system (it is required on macOS and
+harmless on Linux and Windows).
+
+\section{Step 2 --- Build both products, portably}
+\label{sec:build}
+
+Two separate builds are required for each method:
+\begin{itemize}[leftmargin=1.4em,itemsep=2pt]
+  \item the \textbf{executable} \texttt{barsN.out} --- this is what the package's
+        R code actually runs, via \texttt{system()};
+  \item the \textbf{shared library} \texttt{barsN.so} --- placed in the package's
+        \texttt{libs/} directory per its layout.
+\end{itemize}
+
+Rather than hard-code \texttt{-llapack -lblas} (and the obsolete \texttt{-lg2c},
+which no modern system has), we ask R for the flags it was built with. These
+commands are \textbf{identical on macOS, Linux, and Windows}; only R's answers
+differ underneath.
+
+\subsection*{BarsN}
+
+\begin{lstlisting}
+cd barsN
+CC=$(R CMD config CC)
+LIBS="$(R CMD config LAPACK_LIBS) $(R CMD config BLAS_LIBS) $(R CMD config FLIBS)"
+FLAGS="-std=gnu89 -Wno-implicit-function-declaration -Wno-implicit-int"
+
+# (a) the executable
+$CC $FLAGS -o barsN.out \
+    barsN.c barsN_funcs.c barsN_utils.c logspline.c ranlibsub.c com.c $LIBS
+
+# (b) the shared library
+PKG_CFLAGS="$FLAGS" PKG_LIBS="$LIBS" \
+R CMD SHLIB -o barsN.so \
+    barsN.c barsN_funcs.c barsN_utils.c logspline.c ranlibsub.c com.c
+\end{lstlisting}
+
+\subsection*{BarsP}
+
+Identical, with \texttt{P} for \texttt{N} (ensure the \texttt{malloc.h} edit is
+present first):
+
+\begin{lstlisting}
+cd ../barsP
+$CC $FLAGS -o barsP.out \
+    barsP.c barsP_funcs.c barsP_utils.c logspline.c ranlibsub.c com.c $LIBS
+
+PKG_CFLAGS="$FLAGS" PKG_LIBS="$LIBS" \
+R CMD SHLIB -o barsP.so \
+    barsP.c barsP_funcs.c barsP_utils.c logspline.c ranlibsub.c com.c
+\end{lstlisting}
+
+The \texttt{-std=gnu89} and \texttt{-Wno-implicit-*} flags let this legacy
+C89 code compile under modern clang and gcc, which now treat implicit
+declarations and implicit \texttt{int} as errors by default. Expect only harmless
+\texttt{-Wformat-security} and unused-variable warnings.
+
+\paragraph{What \texttt{R CMD config} resolves to.}
+On macOS this expands to Apple's \texttt{Accelerate} framework; on Linux to R's
+own \texttt{libRblas}/\texttt{liblapack}; on Windows to the libraries bundled with
+Rtools. You do not need to know which --- that is the point of asking R.
+
+\section{Step 3 --- Confirm the architecture}
+
+The check that matters most: executable, library, and R must all be the same
+architecture.
+
+\begin{lstlisting}
+file barsN.out barsN.so barsP.out barsP.so
+\end{lstlisting}
+
+On macOS each line should report \texttt{arm64} (Apple Silicon) or
+\texttt{x86\_64} (Intel), matching your R; on Linux \texttt{x86-64} or
+\texttt{aarch64}. If any product reports the wrong architecture it is a foreign
+copy that slipped through: \texttt{rm -f *.o *.so *.out} and rebuild.
+
+\section{Step 4 --- Place the products in the package}
+
+Put the executables in \texttt{exec/} and the shared libraries in \texttt{libs/}:
+
+\begin{lstlisting}
+cp barsN/barsN.out barsP/barsP.out   BARS/exec/
+cp barsN/barsN.so  barsP/barsP.so    BARS/libs/
+\end{lstlisting}
+
+The package is then ready to install (or re-package as a source tarball with
+\texttt{R CMD build BARS}; remember such a tarball should carry \emph{source},
+so each target machine rebuilds its own binaries).
+
+\section{The \texttt{\textasciitilde/.R/Makevars} caveat}
+
+If you carry over a personal \texttt{\textasciitilde/.R/Makevars} from another
+machine, any line naming a machine-specific compiler or library path (a
+hard-coded \texttt{gfortran} location in \texttt{FLIBS}, for instance) will be
+wrong on the new machine and can derail unrelated source installs. Either delete
+such lines and let R use its own defaults, or repoint them at the new machine's
+toolchain. Architecture-independent definitions (such as
+\texttt{-DCalloc=R\_Calloc -DFree=R\_Free -DRealloc=R\_Realloc}) are safe to keep.
+
+\section*{One-line summary}
+
+\begin{quote}
+Copy only the C sources; apply the \texttt{malloc.h}$\rightarrow$\texttt{stdlib.h}
+edit; build \texttt{.out} with the compiler and \texttt{.so} with
+\texttt{R CMD SHLIB}, taking BLAS/LAPACK flags from \texttt{R CMD config}; verify
+with \texttt{file}; then drop \texttt{.out} into \texttt{exec/} and \texttt{.so}
+into \texttt{libs/}. The procedure is the same on every operating system --- only
+the toolchain you installed differs.
+\end{quote}
+
+\end{document}

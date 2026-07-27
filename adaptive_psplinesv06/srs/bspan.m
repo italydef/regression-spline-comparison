@@ -1,0 +1,35 @@
+function bsp = bspan(xgrid,x,p);
+% 
+%   	Computes the bandwidth at each point, xgrid(i), of xgrid 
+%	corresponding to a span of p(i) at that point, 
+%	i = 1, ... ,length(xgrid).
+%	
+%		INPUT (required)
+%	xgrid = points where the bandwidth will be computed
+%	x = the vector of x values
+%	p = the vector of spans (same dimension as xgrid) (If p is
+%		a scalar then it is expanded to be a vector)
+%
+%		OUTPUT
+%	bsp = vector of bandwidths at the points of xgrid
+%
+%  	Last edited:  May 3, 1998
+%
+% 	USAGE: bspan = bandspan(xgrid,x,p);
+%
+%	Copyright: David Ruppert
+%
+n = length(xgrid);
+nx = length(x) ;
+bsp = zeros(n,1) ;
+
+if length(p) == 1 ;
+	p = p*ones(n,1) ;
+end ;
+
+
+for i = 1:n ;
+	np = ceil(nx*min([p(i);1])) ;
+	x2 = sort(abs(x-xgrid(i))) ;
+	bsp(i) = x2(np)*max([p(i);1]) ;
+end ;

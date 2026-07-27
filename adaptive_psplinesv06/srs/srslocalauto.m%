@@ -1,0 +1,94 @@
+function fit = srslocalauto(x,y,degree,penwt,boundstab) ;
+%
+%	Calls srslocal with successively larger values of nknots,
+%	nsubknots, and niter.  Stops when gcv is not reduced by at
+%	least 2%.
+%	
+%	Values of nknots tried:  10, 20, 40, 80, 120
+%	Values of nsubknots tried:  2, 3, 4, 6, 6
+%	Values of niter tried:  1, 2, 2, 2, 2
+%
+%
+%		INPUT (required)
+%	x = independent variable (n by 1)
+%	y = dependent variable (n by 1)
+%
+%		INPUT (optional)
+%	degree = spline degree (default = 2)
+%	penwt = vector of possible penalty weights 
+%		(default = logspace(-10,10,51)
+%	boundstab =  boundary stability parameter (default = 0)
+%
+% 		RETURNS
+%	Returns a structure with the following fields -
+%
+%	yhatglobal 	= fit with global smoothing parameter
+%	yhatloc  	= fit with locally varying smoothing parameter
+%	alpha 		= log of smoothing parameter at each subknot
+%	alpha0		= log of global smoothing parameter 
+%	penwt = possible values of the global smoothing parameter
+%	postvarbetagl = posterior variance of beta with global penwt
+%	postvaryhatgl = posterior variance of yhat with global penwt
+%	postvarbetaloc = posterior variance of beta with local penwt
+%	postvaryhatloc = posterior variance of yhat with local penwt
+%	ulimitloc = upper Bayesian limit for local fit
+%	llimitloc = lower Bayesian limit for local fit
+%	ulimitgl = upper Bayesian limit for global fit
+%	llimitgl = lower Bayesian limit for local fit
+%	knots
+%	subknots
+%	
+%	The local varying
+%	smoothing parameter varies independently at each subknot
+%	and is determined by spline interpolation between subknots
+%
+%
+%	Last edit: 7/16/99
+%
+%	Calls: srs, srsfixedpen, srslocal
+
+
+if nargin < 5 ;
+	boundstab = 0 ;
+end ;
+
+if nargin < 4 ;
+	penwt = logspace(-10,10,51) ;
+end ;
+
+if nargin < 3 ;
+	degree = 2 ;
+end ;
+
+n=length(x) ;
+
+if n > 1.2*120 ;
+	nknots = [10 20 40 80 120]' ;
+	nsubknots = [2 3 4 6 6]' ;
+	niters = [1 2 2 2 2]' ;
+elseif n > 1.2*80 ;
+	nknots = [10 20 40 80 ]' ;
+	nsubknots = [2 3 4 6 ]' ;
+	niters = [1 2 2 2 ]' ;
+elseif n > 1.2*40 ;
+	nknots = [10 20 40 ]' ;
+	nsubknots = [2 3 4 ]' ;
+	niters = [1 2 2 ]' ;
+
+end ;
+
+nn = length(nknots) ;
+
+for i = 1:nn ;
+fit= srslocal(x,y,degree,nknots(i),nsubknots(i),penwt,niters(i),boundstab) ;
+yhat(:,i) = fit.yhatloc ;
+gcv(i) = fit.gcv ;
+end ;
+
+imingcv = find(gcv == min(gcv) ) ;
+
+iminmyopic = max(find( (gcv(2:nn) < .98 * gcv(1:nn-1)))) + 1 ;
+
+fit = struct('yhat',yhat,'gcv',gcv,'iminfull',imingcv,'iminmyopic',iminmyopic) ;
+
+

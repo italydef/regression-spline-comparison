@@ -1,0 +1,12 @@
+%program to test normden.m
+
+L = 5 ;
+x = randn(L,1) ;
+
+mu = zeros(L,1) ;
+cov = eye(L) ;
+
+d = normden(x,mu,cov) ;
+d
+d^(1/L) 
+1/sqrt(2*pi)

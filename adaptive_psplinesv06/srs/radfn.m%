@@ -1,0 +1,13 @@
+function radfn = radial(x,m,c) ;
+[n,d]=size(x) ;
+k = size(c,2) ;
+
+nrm = zeros(n,k) ;
+rad = nrm ;
+for i=1:k ;
+nrm(:,i) = ((x - ones(n,1)*c(i,:))).^2 * ones(d,1) ;
+rad(:,i) = nrm(:,i).^(2*m-d).*log(nrm(:,i))/2 ;
+end ;
+
+radbas=struct('norm',nrm,'rad',rad) ;
+

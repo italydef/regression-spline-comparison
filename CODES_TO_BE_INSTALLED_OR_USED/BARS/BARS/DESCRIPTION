@@ -1,0 +1,16 @@
+Package: BARS
+Version: 1.0-1
+Date: 2006-11-01
+Title: Bayesian Adaptive Regression Splines (BARS)
+Author: Garrick Wallstrom
+Maintainer: Rob Kass <kass@stat.cmu.edu>
+Depends: R
+Description: Solves the generalized nonparametric regression
+ (curve-fitting) problem by assuming the function f(x) may be
+ approximated with a cubic spline.  Utilizes reversible-jump 
+ MCMC on the sets of knots, allowing the spline to adapt to 
+ the data across the domain of x.  Currently available for 
+ continuous responses (Normal errors) and counts (Poisson).
+License: GPL version 2 or newer
+URL: http://www.stat.cmu.edu/~kass/bars/bars.html
+Packaged: Wed Nov  8 09:36:50 2006; bakalj

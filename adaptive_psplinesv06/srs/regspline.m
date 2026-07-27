@@ -1,0 +1,60 @@
+function [yhat,beta,nknots_opt,knots,sigma2hat,xm] = ...
+	regspline(x,y,degree,maxknots) ;
+%
+%	Program to find a regression spline with equally spaced knots
+%	by minimizing GCV to determine the number of knots.
+%
+%	The knots are first set to be (nknots+4) equally spaced points
+%	from min(x) to max(x).  Then the first and last two knots are
+%	removed.  The first and last knots are, of course, not needed
+%	since this are the boundaries.  The second and next to last
+%	are removed to avoid high boundary variance.
+%
+%		INPUT (required)
+%	x = independent variable
+%	y = dependent variable
+%	
+%		INPUT (optional)
+%	degree = degree of the spline (default = 3) 
+%	maxknots = maximum number of knots allowed (default = 10)
+%
+%		OUTPUT
+%	yhat = fitted spline
+%	beta = regression spline coefficients
+%	nknots_opt = number of knots that minimizes GCV
+%	knots = knots corresponding to nknots_opt
+%	xm = design matrix corresponding to knots
+%
+%	Last edit: May 4, 1998
+%	
+%	Copyright: David Ruppert
+%
+if nargin < 4 ;
+	maxknots = 10 ;
+end ;
+
+if nargin < 3 ;
+	degree = 3 ;
+end ;
+
+n = length(x) ;
+for nknots = 1:maxknots ;
+	knots = linspace(min(x),max(x),nknots+4)' ;
+	knots = knots(3:nknots+2) ;
+	xm = powerbasis(x,degree,knots) ;
+	beta = (xm'*xm) \ (xm'*y) ;
+	yhat = xm*beta ;
+	sse = sum((y-yhat).^2) ;
+	gcv(nknots) = sse / (1 - (nknots+degree+1)/n)^2 ;
+end ;
+[mingcv,nknots_opt] = min(gcv) ;
+nknots_opt = min(nknots_opt) ;
+
+knots = linspace(min(x),max(x),nknots_opt+2)' ;
+knots = knots(2:nknots_opt+1) ;
+xm = powerbasis(x,degree,knots) ;
+beta = (xm'*xm) \ (xm'*y) ;
+yhat = xm*beta ;
+sse = sum((y-yhat).^2) ;
+sigma2hat = sse / (n - (nknots+degree+1)) ;
+

@@ -1,0 +1,9 @@
+function y = logisitic(x);
+%
+% 	Returns the logistic function
+% 	Use: y = logistic(x)
+%
+%		OUTPUT
+%	y =  1 ./ ( 1 + exp(-x) )
+%
+y = 1 ./ ( 1 + exp(-x) );

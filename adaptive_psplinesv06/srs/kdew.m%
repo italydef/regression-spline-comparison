@@ -1,0 +1,18 @@
+function y = kdew(x,grid,w,h) ;
+%   Return a weighted kernel density estimate of x, on grid, 
+%   with bandwidth std(x)*h.
+%   w is the vector of weights (of the same dimension as x).
+%   std(x) is calculated using the weights, w.
+%   Usage:  y = kde(x,grid,w,h) ;
+%
+w = w ./ sum(w) ;
+n = rows(x) ;
+m = rows(grid) ;
+y = zeros(m,1) ;
+mx = sum(w.*x) ;
+m2x = sum(w.*x.*x) ; 
+sdx = sqrt(m2x - mx*mx) ; 
+h = h * sdx ;
+for i = 1:m ;
+y(i) = sum( w.*epan((x-grid(i))./ h) ) ./ h ;
+end ;

@@ -1,0 +1,122 @@
+function fit = srslp(x,y,degree,normp,nknots,...
+	penwt);
+%
+%   Fits a regression spline to univariate x's with an L_p norm penalty
+%
+%   USAGE:  fit = srslp(x,y,degree,,normp,nknots,penwt);
+%
+%
+%   Last edited:  4/4/2000
+%
+%		INPUT - REQUIRED
+%	x = independent variable (univariate)
+%	y = response (same length as x)
+%
+%		INPUT - OPTIONAL
+%	degree = degree of the spline (default is 1)
+%	nknots = number of knots (default is 20)
+%	normp = p in the norm, e.g., normp = 2 for L_2 norm (default = 2)
+%	penwt = vector of trial values of penalty weight
+%		(default=logspace(-5,10,30)' 
+%
+%		OUTPUT
+%	fit is a structure containing:
+%
+%	yhat = fitted values (same length as x)
+%	beta = regression spline coefficients (length = 1 + degree + nknots)
+%	gcv = gcv values (one for each value of penwt)
+%	imin = index that minimizes gcv
+%	df = vector of degrees of freedom (same length as penwt)
+%	diagid = diag of the effective weighting matrix
+%	a = alpha = penwt(imin)
+%
+%
+%	CALLS:	powerbasis, lpwt
+%
+%	Copyright: David Ruppert
+%
+
+
+if (nargin < 3 | degree==[]) ;
+degree = 2 ;
+end ;
+
+if  (nargin < 4 | normp == []) ;
+normp = 1 ;
+end ;
+
+if (nargin < 5| nknots==[]) ;
+nknots = 20 ;
+end ;
+
+if (nargin < 6| penwt == []) ;
+penwt = logspace(-2,10,30)' ;
+end ;
+
+n = length(x) ;
+knots = quantileknots(x,nknots) ;
+
+xm = powerbasis01(x,degree,knots) ;
+xx = xm'*xm ;
+xy = xm'*y ;
+
+id = diag([zeros(1,degree+1)  ones(1,nknots)]) ;
+m = length(penwt) ;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%   Set up storage  %%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+beta = zeros(cols(xm),m) ;
+yhat = zeros(n,m) ;
+asr = zeros(m,1) ;
+gcv = asr ;
+trsd = asr ;
+diagid = zeros(m,cols(xm)) ;
+
+	for i=1:m ;
+        id = diag([zeros(1,degree+1)  ones(1,nknots)]) ;
+		if m == 1 ;
+		niter = 20 ;
+		else ;
+		niter = 5 ;
+		end ;
+
+		for l=1:niter ;
+
+				if (l == 1) & (i==1) ;
+				id2 = id ;	%  Starting value of id
+				end ;
+		%%%%%  IF l==1 and i > 1, then id2 is not updated  %%%%%
+			if l > 1 ;
+			beta2 = beta(degree+2:rows(id),i)' ;
+			id2 = diag([zeros(1,degree+1) ...
+		                    lpwt(beta2,normp)]) ;
+			end ;
+		b = inv(xx + penwt(i)*id2) ;
+		beta(:,i) = b*xy ;
+		end ;		
+	xxb = xx*b ;
+	trsd(i) = trace(xxb) ;
+
+	yhat(:,i) = xm*beta(:,i) ;
+	asr(i) = mean((y-yhat(:,i)).^2) ;
+		if i==1;
+		trsdsd = trace(xxb*xxb) ;
+		sigma2hat= n*asr(i)/(n-2*trsd(i)+trsdsd) ;
+		end ;
+	gcv(i) = asr(i) / (1-trsd(i)/n)^2 ;
+	diagid(i,:) = diag(id2)' ;
+	end ;
+imin = find(  (gcv==min(gcv))  ) ;
+imin = min(imin) ;
+df = trsd ;
+yhat = yhat(:,imin) ;
+beta = beta(:,imin) ;
+diagid = diagid(imin,:) ;
+a = penwt(imin) ;
+xgrid = linspace(min(x),max(x),50)' ;
+
+
+
+fit = struct('yhat',yhat,'beta',beta,'gcv',gcv,'imin',imin,'df',df, ...
+'diagid',diagid,'a',a) ;

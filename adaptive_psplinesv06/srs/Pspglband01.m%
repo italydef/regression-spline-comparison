@@ -1,0 +1,66 @@
+function band = Pspglband01(fit,der,alpha,niter) ;
+
+if nargin < 4 ;
+	niter = 20000 ;
+end ;
+
+if nargin < 3 ;
+	alpha = .05 ;
+end ;
+
+if nargin < 2 ;
+	der = 0 ;
+end ;
+
+
+xstd = (fit.x-mean(fit.x)) ./ std(fit.x) ;
+xgrid =  linspace(min(xstd),max(xstd),100)' ;
+knots = (fit.knots - mean(fit.x)) ./ std(fit.x) ;
+nknots = length(knots) ;
+xm2 = powerbasis01(xgrid,fit.degree,knots) ;
+
+
+if der == 1 ;
+xmder = xm2 ;
+
+
+xmder(:,1) = 0*xmder(:,1) ;
+degree = fit.degree ;
+for i = 2:degree+1 ;
+	xmder(:,i) = (i-1)*(abs(xm2(:,i))).^( (i-2)/(i-1)  ) ...
+	 .* (sign(xgrid)).^(i-2);
+end ;
+
+for i=degree+2:degree+1+nknots ;
+	xmder(:,i) = degree* (abs(xm2(:,i))).^(  (degree-1)/degree ) ...
+		.* (xm2(:,i) > 0);
+end ;
+
+xm2 = xmder ;
+end ;
+
+
+
+mhat = xm2*fit.beta ;
+sighalf = sqrtm(fit.postvarbeta) ;
+M = size(sighalf,1) ;
+sdmhat = sqrt( ((xm2*fit.postvarbeta).*xm2)*ones(M,1) ) ;
+
+
+if der == 1 ;
+mhat = mhat./std(fit.x) ;
+sdmhat = sdmhat./std(fit.x) ;
+end ;
+
+mx = zeros(niter,1) ;
+
+for i=1:niter ;
+z = (xm2*sighalf*randn(M,1)) ./ sdmhat ;
+mx(i) = max(abs(z)) ;
+end ;
+mx = sort(mx) ;
+k = mx(round((1-alpha)*niter)) 
+band = struct('xgrid',mean(fit.x)+std(fit.x)*xgrid,'mhat',mhat,'LL', ...
+	mhat - k*sdmhat,'UL',mhat+k*sdmhat) ;
+
+

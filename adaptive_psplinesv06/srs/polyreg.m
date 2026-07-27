@@ -1,0 +1,29 @@
+function [yhat,beta,sigma2hat,cv]=polyreg(y,x,p)
+
+% Computes the fit and parameters of a polynomial regression
+% of degree p
+%
+% Syntax: [yhat,beta]=polyreg(y,x,p)
+%
+%	Last edit:	October 1, 1998
+%
+
+[n,D]=size(x);
+Dp=ones(n,1);
+for i=1:D
+for j=1:p(i)
+Dp=[Dp x(:,i).^j];
+end
+end
+ixx = inv(Dp'*Dp) ;
+beta = ixx*Dp'*y;
+yhat=Dp*beta;
+
+sigma2hat = sum( (y-yhat).^2 ) ./ (n-p-1) ;
+
+
+h=ones(n,1) ;
+	for i = 1:n ;
+		h(i) = Dp(i,:)* ixx * Dp(i,:)' ;
+	end ;
+	cv= sum(((y-yhat)./ (1-h) ).^2) ./ n ;

@@ -1,0 +1,185 @@
+function fit = LogSpl01(x,y,degree,nknots,z,penwt) ;
+%
+%  Additive penalized logistic regression spline.  Copied from
+%		logitspline on 5/8/2000
+%
+%  Last edited:  11/3/2000
+%
+%
+%		INPUT (REQUIRED)
+%	x = matrix of independent variables (n by d, where d is the number
+%		of independent variables
+%	y = vector of dependent variable (n by 1)
+%
+%		INPUT (OPTIONAL)
+%	degree = degree of spline (default is 2)
+%	nknots = number of knots for each independent variable (this is
+%		d by 1.  If the input value is 1 by 1, then it is expanded
+%		to a d by 1 constant vector.  (default is 10 for each
+%		independent variable)
+%	z = matrix of independent variable that enter linearly (can
+%		be empty)
+%	penwt = vector of possible values of the penalty weight (actual
+%		penalty weight is selected from penwt by GCV) (default is
+%		logspace(-8,8,50)')
+%
+%		OUTPUT
+%   	yhat = predicted values at gcv lambda
+%   	beta = regression coefficients at GCV-lambda.  The coefficients
+%		are ordered: intercept, linear terms, polynomial terms
+%		for first x, piecewise polynomial terms for first x, etc
+%   	mhat = fitted functions at the observed x's (n by d) using 
+%		minimum gcv beta.
+%          	Each fitted function gives the fit when
+%		the other variables are at their mean values.
+%	mhatder = derivative of mhat
+%	xgrid = xgrid at which mhat and mhatder are evaluated
+%	
+%	deviance
+%   	gcv   = gcv at the values of penwt
+%   	imin = index of value of penwt that minimizes gcv so that
+%          the minimum gcv fitted values and regression coefficients
+%          are yhat(:,imin) and beta(:,imin)
+%	tbeta = t-statistics for beta = beta./stderror
+%	postvarmhat = posterior variance of mhat
+%	postvarmhatder = posterior variance of mhatder
+%	stdbeta = standard errors of beta
+%	ulimmhat = upper 95% limit on mhat
+%	llimmhat = lower 95% limit on mhat
+%	ulimmhatder = upper 95% limit on mhatder
+%	llimmhatder = lower 95% limit on mhatder
+%
+
+if rows(y) == 1 ;y = y' ; end ;  % Make x and y columns
+if rows(x) == 1 ;x = x' ; end ;
+
+[n,d] = size(x) ;
+
+if nargin < 6 ;
+	penwt = logspace(-6,10,40) ;
+end ;
+
+if nargin < 5 ;
+	z = [] ;
+end ;
+
+if (nargin < 4 | isempty(nknots)==1) ;
+	nknots = 10 ;
+end ;
+
+if (nargin < 3 | isempty(degree) == 1);
+	degree = 2 ;
+end ;
+
+if length(nknots) == 1 ;
+	nknots =nknots*ones(d,1) ;
+end ;
+
+basis = addbasis01(x,degree,nknots,z,x,[],0) ;
+xm=basis.xm ;
+
+m = max(size(penwt)) ;
+betamat = zeros(size(xm,2),m) ;
+yhatmat = zeros(n,m) ;
+deviance = zeros(m,1) ;
+gcv = deviance ;
+tr = deviance ;
+betastart = zeros(size(xm,2),1) ;
+betastart(1) = .5 ;
+id = zeros(1,1+size(z,2)) ;
+for j = 1:d ;
+	id = [ id zeros(1,degree) ones(1,nknots(j)) ] ;
+end ;
+
+for j=1:m ;
+
+Da = penwt(j)*diag(id) ;
+if j==1 ;
+	beta = betastart ;
+	niter = 15 ;
+	else ; 
+	beta=betamat(:,j-1) ;
+	niter = 5 ;
+end ; 
+
+	i=1 ;          % Iteratively reweighted least squares loop
+	crit =1 ;
+	while (i < niter) & (crit > .000001) ;
+	betaold = beta ;
+	yhat = logistic(xm*beta) ;
+	Lprime = yhat .* (1-yhat) ;
+	L2 = kron( ones(1,size(xm,2)),Lprime ) ;
+	l1 = xm' * (y - yhat) ;
+	D = xm'* (xm.*L2) ;
+	DDainv = inv(D + Da) ;
+	beta = beta + DDainv*(l1 - Da*beta) ;
+	crit = norm(beta-betaold,1) ./ (norm(betaold,1)+100*eps) ;
+	end ;
+
+yhatmat(:,j)=logistic(xm*beta) ;
+
+deviance(j) = -2*(  (y')*log(yhatmat(:,j)+100*eps)  ...
+             +  (1-y)'*log(1-yhatmat(:,j)+100*eps)  ) ;
+betamat(:,j) = beta ;
+c = (xm'*(xm.*L2))*DDainv ;
+tr(j) = trace(c) ;
+gcv(j) = deviance(j) ./ ((1 - tr(j)/n)^2);
+end ;
+
+
+imin = min(find( (gcv == min(gcv)) )) ;
+Da = penwt(imin)*diag(id) ;
+DDainv = inv(D + Da) ;
+
+varmatrix = DDainv*D*DDainv ;
+stdbeta = sqrt(diag(varmatrix)) ;
+tbeta = beta./(eps+stdbeta) ;
+
+beta = betamat(:,imin) ;
+yhat = yhatmat(:,imin) ;
+
+ngrid = 200 ;
+xbar = ones(ngrid,1)*mean(x) ;
+
+if isempty(z) == 0 ;
+zbar = ones(ngrid,1)*mean(z) ;
+else ;
+zbar = [] ;
+end ;
+
+xgrid = zeros(ngrid,d) ;
+postvarmhat = xgrid ;
+postvarmhatder = xgrid ;
+
+for j=1:d ;
+	xj = xbar ;
+	xderj = 0*xbar ;
+	xj(:,j) = linspace(min(x(:,j)),max(x(:,j)),ngrid)' ;
+	xderj(:,j) = linspace(min(x(:,j)),max(x(:,j)),ngrid)' ;
+	xgrid(:,j) = xj(:,j) ;
+	basis = addbasis01(xj,degree,nknots,zbar,x) ;
+	xmj = basis.xm ;
+	mhat(:,j)=xmj*beta;
+	basis = addbasis01(xderj,degree,nknots,zbar,x,1,j) ;	
+	xmderj = basis.xm ;
+	mhatder(:,j) = xmderj*beta ;
+
+postvarmhat(:,j) = (xmj.*(xmj*DDainv))*ones(length(beta),1) ;
+postvarmhatder(:,j) = (xmderj.*(xmderj*DDainv))*ones(length(beta),1) ;
+
+ulimmhat(:,j) = mhat(:,j) + 2*sqrt(postvarmhat(:,j)) ;
+llimmhat(:,j) = mhat(:,j) - 2*sqrt(postvarmhat(:,j)) ;
+ulimmhatder(:,j) = mhatder(:,j) + 2*sqrt(postvarmhatder(:,j)) ;
+llimmhatder(:,j) = mhatder(:,j) - 2*sqrt(postvarmhatder(:,j)) ;
+
+
+end ;
+
+
+fit = struct('beta',beta,'yhat',yhat,'mhat',mhat,'deviance',deviance, ...
+	'gcv',gcv,'imin',imin,'mhatder',mhatder,'stdbeta',stdbeta, ...
+	'tbeta',tbeta,'xgrid',xgrid,'postvarmhat',postvarmhat, ...
+	'postvarmhatder',postvarmhatder, ...
+	'ulimmhat',ulimmhat,'llimmhat',llimmhat, ...
+	'ulimmhatder',ulimmhatder,'llimmhatder',llimmhatder, ...
+	'xm',xm,'nknots',nknots,'varmatrix',varmatrix) ; 

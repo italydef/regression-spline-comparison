@@ -1,0 +1,33 @@
+# --- Compiled / machine-specific native artefacts (rebuild per machine) ---
+# These are architecture-specific and must NOT be committed. See
+# install/USING_smoothness-master.md and CLAUDE.md ("Native / non-CRAN builds").
+*.so
+*.o
+*.out
+*.dll
+*.dylib
+
+# --- Generated pipeline results (produced by running the scripts) ---
+# Simulation results written by run_simulation.R:
+INPUT/Simulation/*.RData
+# Figures written by make_*.R and run_realdata_*.R:
+OUTPUT/Simulation/*.pdf
+OUTPUT/RealData/*.pdf
+OUTPUT/RealData/*.RData
+# keep the (otherwise empty) directories tracked
+!**/.gitkeep
+
+# --- R session / build junk ---
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# --- OS / editor cruft ---
+.DS_Store
+._*
+Thumbs.db
+*~
+.vscode/
+.idea/

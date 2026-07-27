@@ -1,0 +1,125 @@
+function [xgrid,yfinal,yfull,yprelimbest] = turbo(X,Y,K_max)
+% main program;
+% input parameters: K_max = max # of knots in the model;
+%	Written by Stefano Alberti
+%
+
+%[X Y]=data;
+%load(mydata,'X','Y');
+
+A = sortrows([X Y]);
+X = A(:,1);
+Y = A(:,2);
+[N,p]=size(X);
+[IN,OUT,K_all] = build_OUT(X);
+
+% OUT contains all the potential knots, stored as indeces
+% to the X vector. 
+% The vector IN (same size as OUT) contains the indeces
+% of the knots already in the model. At start, all entries
+% of IN are zero, all entries of OUT are non-zero;
+while K_max > K_all,
+   display('not enough data points, please re-enter');
+   [X Y] = data;
+   [OUT,K_all] = build_OUT(X);
+end;
+
+% best_model(i,1:K_all) contains the indeces that give the
+% lowest ASR for a model with i knots; the (K_all+1)-th
+% position contains the relative ASR;  the (K_all+2)-th
+% position contains the relative GCV.
+for i=1:K_max,
+   for j=1:K_all,   
+      best_model(i,j)=0;
+      best_model(i,K_all+1)=inf;   
+      best_model(i,K_all+2)=inf;    
+   end;
+end;
+
+% this is the main loop, augmenting the current model by
+% one knot at a time, until K_max knots are in, choosing
+% every time the knot that determines the biggest ASR drop;
+K=0;
+best_ASR=inf;
+for K=1:K_max,
+   best_knot=0; 
+   for j=1:K_all,
+      if OUT(j) > 0,
+         this_ASR=new_ASR(j,IN,OUT,X,Y);
+         if this_ASR < best_ASR,
+            best_ASR=this_ASR;
+            best_knot=j;
+         end;
+      end;
+   end;
+   if best_knot>0,
+      IN(best_knot)=OUT(best_knot);
+      OUT(best_knot)=0;
+   end; 
+   for j=1:K_all,
+      best_model(K,j)=IN(j);
+   end;
+best_model(K,K_all+2)=best_ASR/(1-(3*K+1)/N).^2;
+best_model(K,K_all+1)=best_ASR;
+end;                   
+yfull = piece(IN,X,Y);
+
+% now search for the lowest GCV model;
+text1=['full model: ' int2str(K_max) ' knots, GCV= ' num2str(best_model(K,K_all+2)) ' ;     left-click to continue'];
+my_text=xlabel(text1);
+freeze;
+delete(my_text);
+best_GCV=inf;
+for i=1:K_max,
+   if best_model(i,K_all+2)<best_GCV
+      best_GCV=best_model(i,K_all+2);
+      best_sofar=i;
+   end;   
+end;
+IN=best_model(best_sofar,1:K_all);
+[yprelimbest,xgrid]= piece(IN,X,Y);
+text1=['preliminary best model: ' int2str(best_sofar) ' knots, GCV= ' num2str(best_GCV) ' ;     left-click to continue'];
+my_text=xlabel(text1);
+freeze;
+delete(my_text);
+
+% now tries to drop one knot at a time, in search of a leaner
+% model with a better GCV;
+done=0;
+while ~done,
+   drop_sofar=0;
+   for j=1:K_all,
+      this_GCV=new_GCV(j,IN,OUT,X,Y);
+      if this_GCV<best_GCV
+         best_GCV=this_GCV;
+         drop_sofar=j;
+      end;
+   end;
+   if drop_sofar>0
+      best_sofar=best_sofar-1;
+      IN(drop_sofar)=0; 
+   else   
+      done=1;
+   end;
+end;
+
+yfinal = piece(IN,X,Y);
+text1=['final best model: ' int2str(best_sofar) ' knots, GCV= ' num2str(best_GCV) ];
+my_text=xlabel(text1);
+
+
+
+function freeze_val=freeze()
+%  waits for a left-click;
+pause(1);
+button=3;
+while button~=1,
+   [a,b,button]=ginput(1);
+end;
+
+   
+
+
+
+
+

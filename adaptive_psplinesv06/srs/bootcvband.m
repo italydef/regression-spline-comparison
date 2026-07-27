@@ -1,0 +1,69 @@
+function [yhatboot,xgrid,hminboot,mse,yhatcv,hmincv,cv] = ...
+	bootcvband(x,y,k,span,ngrid) ;
+%
+%	Returns the local polynomial estimates with the cv and bootstrap
+%	chosen spans --- the cv span is global while the bootstrap span
+%		is local
+%	The bootstrap estimate is computed at each value of xgrid.
+%	The cv estimate is computed at each x
+%
+%		INPUT
+%	x = independent variable (n by 1)
+%	y = dependent variable (n by 1)
+%	span = vector of possible values of the span (default = 
+%		linspace((4+2*k)/n,1,20))
+%	k = degree of local polynomials (default = 1)
+%	ngrid = number of elements of xgrid (default = 50) 
+%
+%	CALLS: lpolydb, cvband
+%	USAGE: [yhatboot,xgrid,hminboot,mse,yhatcv,hmincv,cv] = ...
+%	bootcvband(x,y,k,span,ngrid) ;
+%
+%
+%		OUTPUT
+%	yhatboot = yhat with bootstrap bandwidths (ngrid by 1)
+%	xgrid = points at which yhatboot is computed (ngrid by 1)
+%	hminboot = bootstrap chosen bandwidths (ngrid by 1)
+% 	mse = bootstrap computed estimates of mse (ngrid by length(span))
+%	yhatcv = yhat with cv bandwidths (n by 1)
+%	hmincv = cv chosen bandwidths --- corresponds to a fixed span (n by 1)
+%	cv = value of cv as a function of span (dimension = length(span) by 1)
+%
+%	yhatcv, hmincv, and cv are returned by cvspan 
+%
+%	Last edit: 7/24/97
+%
+%	Copyright: David Ruppert
+%
+n = length(x) ;
+if nargin < 5 ;
+ngrid = 50 ;
+end ;
+if nargin < 4 ;
+k = 1 ;
+end ;
+if nargin < 3 ;
+span = linspace((4+2*k)/n,1,20) ;
+end ;
+
+xgrid = linspace(min(x),max(x),ngrid)' ;
+[yhatcv,hmincv,cv] = cvband(x,y,k,span) ;
+yhatcv2 = interp1(x,yhatcv,xgrid,'spline') ;
+
+sigma2 = mean( (y-yhatcv).^2 ) ;	% This could be corrected for DF
+
+for j=1:length(span) ;
+h(:,j) = bspan(xgrid,x,span(j)) ;
+[f(:,j),var(:,j)]=lpolydb(x,yhatcv,h(:,j),xgrid,0,k) ;
+bias(:,j) = f(:,j) - yhatcv2 ;
+mse(:,j) = bias(:,j).^2 + sigma2*var(:,j) ;
+end ;
+
+hminboot = zeros(length(xgrid),1) ;
+
+for i=1:length(xgrid) ;
+[msemin(i),jmin(i)] = min(mse(i,:)) ;
+hminboot(i) = h(i,jmin(i)) ;
+end ;
+
+[yhatboot,varyhat] = lpolydb(x,y,hminboot,xgrid,0,k) ;
