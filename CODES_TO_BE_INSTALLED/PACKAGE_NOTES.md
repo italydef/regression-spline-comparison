@@ -25,7 +25,7 @@ Apple M2 (Sequoia 15.7.7), under **R 4.6.0 (2026-04-24)**.
 
 JAGS: https://sourceforge.net/projects/mcmc-jags/files/
 
-## Provided with the code (in this `install/` folder)
+## Provided with the code, to be installed (in this `CODES_TO_BE_INSTALLED/` folder)
 
 - **SCHACE** — https://github.com/ZhaoyingLuLuLu/SCHACE (`SCHACE-main.zip`)
 - **AdaptFitOS** — `AdaptFitOS_0.69.tar.gz`, from

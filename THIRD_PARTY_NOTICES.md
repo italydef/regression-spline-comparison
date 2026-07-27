@@ -11,7 +11,7 @@ authors.
 If you reuse any of these components outside this study, cite and comply with the
 original source rather than this repository.
 
-## Installable packages (`CODES_TO_BE_INSTALLED_OR_USED/`)
+## Installable packages (`CODES_TO_BE_INSTALLED/`)
 
 | Component | Source | License |
 |---|---|---|
@@ -22,14 +22,13 @@ original source rather than this repository.
 | `sars_1.0.tar.gz` | Obtained from the authors (Zhou & Shen, SARS method) | See package; permission of original authors |
 | `SCHACE-main.zip` | https://github.com/ZhaoyingLuLuLu/SCHACE | MIT |
 | `BARS/` | https://www.stat.cmu.edu/~kass/bars/bars.html — JSS v26i01: https://www.jstatsoft.org/article/view/v026i01 | See BARS source / JSS article |
-| `smoothness-master/`, `smoothness-master.zip` | Obtained from the authors | See package; permission of original authors |
 
 ## Bundled helper code (runtime, at repo root)
 
 | Component | Source | Notes |
 |---|---|---|
 | `OKPSPS-main/` | https://github.com/AnFreTh/OKPSPS | Used for the EAPS method (`fit_gam_optim`). Check the upstream repo for its current license. |
-| `smoothness-master/` | Obtained from the authors | Used for EAS (`pilotQV`). Fortran **source** only; the compiled `localmethod64.so`/`.o` are intentionally **not** shipped and must be built per machine in this folder (see `CODES_TO_BE_INSTALLED_OR_USED/USING_smoothness-master.md`). |
+| `smoothness-master/` | Obtained from the authors | Used for EAS (`pilotQV`). Fortran **source** only; the compiled `localmethod64.so`/`.o` are intentionally **not** shipped and must be built per machine in this folder (see `USING_smoothness-master.md`). |
 | `adaptive_psplinesv06/` | Obtained from the authors | MATLAB code used by RC and BAPS. |
 | `AMPScode/` | Obtained from the authors (Fink & Wells, AMPS method) | Used for the AMP method. |
 | `R_software/` | Obtained from the authors | Sourced helpers. |
@@ -45,4 +44,4 @@ BAPS (Baladandayuthapani et al. 2005), DMS (Denison et al. 1998), BARS (DiMatteo
 
 > If any component here was shared with you privately and you would prefer it not be
 > redistributed publicly, remove that folder/tarball from the repository and replace it
-> with a download link in `CODES_TO_BE_INSTALLED_OR_USED/PACKAGE_NOTES.md`.
+> with a download link in `CODES_TO_BE_INSTALLED/PACKAGE_NOTES.md`.

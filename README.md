@@ -56,22 +56,22 @@ scripts use `GeDS::NGeDS` and do **not** need `wavethresh`. `splines2` must be
 *attached* (`library(splines2)`), not merely installed, because ASPL calls
 `bSpline()` un-namespaced.
 
-### Bundled packages (in `CODES_TO_BE_INSTALLED_OR_USED/`)
+### Bundled packages (in `CODES_TO_BE_INSTALLED/`)
 
 These are provided in this repository and installed from the local tarballs/sources.
-See **[`CODES_TO_BE_INSTALLED_OR_USED/PACKAGE_NOTES.md`](CODES_TO_BE_INSTALLED_OR_USED/PACKAGE_NOTES.md)** for full details and
+See **[`CODES_TO_BE_INSTALLED/PACKAGE_NOTES.md`](CODES_TO_BE_INSTALLED/PACKAGE_NOTES.md)** for full details and
 original download links, and **[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)**
 for provenance and licenses.
 
 ```r
 # order matters: SemiPar before AdaptFitOS
-install.packages("CODES_TO_BE_INSTALLED_OR_USED/SemiPar_1.0-4.2.tar.gz",        repos = NULL, type = "source")
-install.packages("CODES_TO_BE_INSTALLED_OR_USED/AdaptFitOS_0.69.tar.gz",        repos = NULL, type = "source")  # FAPS
-install.packages("CODES_TO_BE_INSTALLED_OR_USED/bsml_1.5-1.tar.gz",             repos = NULL, type = "source")  # HAS
-install.packages("CODES_TO_BE_INSTALLED_OR_USED/freeknotsplines_1.0.1.tar.gz",  repos = NULL, type = "source")  # FREEK
-install.packages("CODES_TO_BE_INSTALLED_OR_USED/sars_1.0.tar.gz",               repos = NULL, type = "source")  # SARS
-# SCHACE (SCHA): unzip CODES_TO_BE_INSTALLED_OR_USED/SCHACE-main.zip and install per its README
-# BARS: see CODES_TO_BE_INSTALLED_OR_USED/INSTALL_bars.pdf (builds an executable + shared library)
+install.packages("CODES_TO_BE_INSTALLED/SemiPar_1.0-4.2.tar.gz",        repos = NULL, type = "source")
+install.packages("CODES_TO_BE_INSTALLED/AdaptFitOS_0.69.tar.gz",        repos = NULL, type = "source")  # FAPS
+install.packages("CODES_TO_BE_INSTALLED/bsml_1.5-1.tar.gz",             repos = NULL, type = "source")  # HAS
+install.packages("CODES_TO_BE_INSTALLED/freeknotsplines_1.0.1.tar.gz",  repos = NULL, type = "source")  # FREEK
+install.packages("CODES_TO_BE_INSTALLED/sars_1.0.tar.gz",               repos = NULL, type = "source")  # SARS
+# SCHACE (SCHA): unzip CODES_TO_BE_INSTALLED/SCHACE-main.zip and install per its README
+# BARS: see CODES_TO_BE_INSTALLED/INSTALL_bars.pdf (builds an executable + shared library)
 ```
 
 ### Native code (rebuild per machine — do not reuse binaries)
@@ -86,12 +86,12 @@ deliberately **not** committed. Rebuild them on your machine:
   R CMD SHLIB -O3 localrisk.f90 localfit.f90 -o localmethod64.so
   ```
   Full cross-platform instructions (including the gfortran setup) are in
-  **[`CODES_TO_BE_INSTALLED_OR_USED/USING_smoothness-master.md`](CODES_TO_BE_INSTALLED_OR_USED/USING_smoothness-master.md)**.
+  **[`USING_smoothness-master.md`](USING_smoothness-master.md)**.
   All three driver scripts reference this one folder
   (`SMOOTH_DIR <- file.path(WORKING_DIR, "smoothness-master")`), so the build
   works the same on any architecture.
 - **sars** and **BARS** also contain compiled code; `R CMD INSTALL` (sars) and the
-  BARS build notes (`CODES_TO_BE_INSTALLED_OR_USED/INSTALL_bars.pdf`) recompile them for your machine.
+  BARS build notes (`CODES_TO_BE_INSTALLED/INSTALL_bars.pdf`) recompile them for your machine.
 
 ## Repository layout
 
@@ -112,14 +112,15 @@ deliberately **not** committed. Rebuild them on your machine:
 ├── OKPSPS-main/            # EAPS method (bundled, from AnFreTh/OKPSPS)
 ├── R_software/             # sourced helpers (bundled)
 ├── adaptive_psplinesv06/   # MATLAB code for RC / BAPS (bundled)
-├── smoothness-master/      # EAS Fortran source (source only; build the .so in place)
+├── smoothness-master/      # EAS Fortran source (sourced, not installed; build the .so in place)
+├── USING_smoothness-master.md  # how to build the smoothness .so on any OS
 ├── INPUT/
 │   ├── Simulation/         # simulation results land here (generated)
 │   └── RealData/           # usdisk.csv, well.txt, well.RData
 ├── OUTPUT/
 │   ├── Simulation/         # simulation figures (generated)
 │   └── RealData/           # real-data figures (generated)
-├── CODES_TO_BE_INSTALLED_OR_USED/   # bundled third-party packages + install docs
+├── CODES_TO_BE_INSTALLED/  # third-party packages to INSTALL (tarballs, BARS, SCHACE) + install docs
 ├── THIRD_PARTY_NOTICES.md  # provenance + licenses of bundled code
 └── LICENSE                 # MIT (authors' own code only)
 ```
