@@ -46,7 +46,13 @@ install.packages(c(
   "fields",       # 17.3    (EAS)
   "pso",          # 1.0.4   (EAPS)
   "miscF",        # 0.1-5   (DMS; pulls in rjags -> needs JAGS installed)
-  "GeDS"          # 0.3.5   (REAL DATA only: noise-scale for RC/SARS/AMP)
+  "GeDS",         # 0.3.5   (REAL DATA only: noise-scale for RC/SARS/AMP)
+  "ggplot2",      # 4.0.3   (figures: functions.R, make_boxplots.R, make_heatmap.R, make_estimates.R)
+  "dplyr",        # 1.2.1   (figures)
+  "tidyr",        # 1.3.2   (figures)
+  "cowplot",      # 1.2.0   (figures: functions.R panel layout)
+  "patchwork",    # 1.3.2   (figures: panel layout)
+  "scales"        # 1.4.0   (figures: make_boxplots.R color palette)
 ))
 ```
 
@@ -157,7 +163,7 @@ source("make_estimates.R")
 
 Figures are written to `OUTPUT/Simulation/`.
 
-To plot true functions f1, f2, f3, f4, f4, f6 plus a noisy sumulation, run functions.R.
+To plot true functions f1, f2, f3, f4, f5, f6 plus a noisy simulation, run functions.R.
 The output plots are written to `OUTPUT/Simulation/`.
 
 
@@ -176,8 +182,10 @@ excluded from that figure.)
 
 ## Notes and gotchas
 
-- Each method is wrapped in `tryCatch`; a method that fails leaves `NA`s rather than
-  stopping the run.
+- In the real-data drivers (`run_realdata_usdisk.R`, `run_realdata_well.R`), each
+  method call is wrapped in `tryCatch`; a method that fails leaves `NA`s rather than
+  stopping the run. The simulation driver (`run_simulation.R`) does **not** wrap
+  method calls in `tryCatch` — a failing method there aborts the whole run.
 - `set.seed(123)` is set for reproducibility — keep it.
 - `run_simulation.R` sources `METHODS.R` (not `METHODS_REAL_DATA.R`); the two method
   files differ in their noise-scale estimator and must not be merged.
