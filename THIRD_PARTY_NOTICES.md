@@ -33,6 +33,12 @@ original source rather than this repository.
 | `AMPScode/` | Obtained from the authors (Fink & Wells, AMPS method) | Used for the AMP method. |
 | `R_software/` | Obtained from the authors | Sourced helpers. |
 
+## Real datasets (`INPUT/RealData/`)
+
+| Component | Source | License |
+|---|---|---|
+| `well.RData`, `well.txt` (well-log data) | Alan Turing Institute GitHub repo: https://github.com/alan-turing-institute/rbocpdms/tree/master/Data/well%20log ; described in Ruanaidh & Fitzgerald (1996) | MIT license |
+
 ## Method → original reference
 
 Each compared method traces to a published method; see the paper's reference list.
