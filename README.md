@@ -169,11 +169,29 @@ The output plots are written to `OUTPUT/Simulation/`.
 
 ### Real data
 
+The well-log dataset (`INPUT/RealData/well.RData`, `well.txt`) is bundled in this
+repository (MIT-licensed; see `THIRD_PARTY_NOTICES.md`).
+
+The USD/ISK exchange-rate dataset is **not** bundled: Investing.com's Terms and
+Conditions prohibit redistributing their data, so `INPUT/RealData/usdisk.csv` is
+not included. To reproduce `run_realdata_usdisk.R`, download it yourself:
+
+1. On Investing.com, open the USD/ISK "Historical Data" page.
+2. Set the date range to cover at least September 2000 through December 2015,
+   frequency = Monthly, sort oldest-first (ascending by date), and download the CSV
+   (columns: `date, price, open, high, low, change`).
+3. Save the file as `INPUT/RealData/usdisk.csv`.
+4. `run_realdata_usdisk.R` selects rows 41:184 of that file as January 2004 -
+   December 2015 (144 monthly observations); this assumes the file starts at
+   September 2000 in ascending order. If your download has a different starting
+   date or row order, adjust the `isk$price[41:184]` slice (and the `dates` vector)
+   in `run_realdata_usdisk.R` to match.
+
 Independent of the simulation:
 
 ```r
 source("run_realdata_well.R")     # well-log data
-source("run_realdata_usdisk.R")   # USD/ISK exchange-rate data
+source("run_realdata_usdisk.R")   # USD/ISK exchange-rate data (after step 1-3 above)
 ```
 
 Datasets are read from `INPUT/RealData/`; figures and fits are written to

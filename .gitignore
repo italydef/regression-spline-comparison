@@ -14,6 +14,9 @@ INPUT/Simulation/*.RData
 OUTPUT/Simulation/*.pdf
 OUTPUT/RealData/*.pdf
 OUTPUT/RealData/*.RData
+# usdisk.csv is NOT bundled (Investing.com ToS forbids redistribution); users
+# download it themselves per README.md "Real data" and drop it here locally.
+INPUT/RealData/usdisk.csv
 # keep the (otherwise empty) directories tracked
 !**/.gitkeep
 

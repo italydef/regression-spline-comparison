@@ -38,6 +38,7 @@ original source rather than this repository.
 | Component | Source | License |
 |---|---|---|
 | `well.RData`, `well.txt` (well-log data) | Alan Turing Institute GitHub repo: https://github.com/alan-turing-institute/rbocpdms/tree/master/Data/well%20log ; described in Ruanaidh & Fitzgerald (1996) | MIT license |
+| `usdisk.csv` (USD/ISK exchange rate, monthly average, Jan 2004 - Dec 2015) | Investing.com | **Not bundled.** Investing.com's Terms and Conditions prohibit redistributing their data without prior written permission. See `README.md` ("Real data") for how to download it yourself before running `run_realdata_usdisk.R`. |
 
 ## Method → original reference
 
