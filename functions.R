@@ -3,16 +3,25 @@
 library(ggplot2)   # test-function panels (geom_point / geom_line)
 library(cowplot)   # ggdraw() / draw_plot() to compose the 6-panel figure
 
-WORKING_DIR  <- getwd() 
+WORKING_DIR  <- getwd()
 OUTPUT_DIR <- file.path(WORKING_DIR, "OUTPUT", "Simulation")
 dir.create(OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
-# Test functions 
+# Test functions
+# The six piecewise-smooth benchmark functions (f1-f6) compared across
+# fitting methods in the paper: each stresses a different kind of local
+# irregularity (jump discontinuity, spike/peak, smooth bump, multiple
+# jumps, sign-based discontinuities).
+
+# f1: single jump discontinuity at x = 0.5 (flat left of the jump, smooth
+# oscillation to the right).
 f1 <- function(x) {
   y <- ifelse(x < 0.5, -1.5, 0.25 * sin(x ^ 2 * pi ^ 1.5))
   return(y)
 }
 
+# f2: two narrow spikes/peaks (near x = 0.3 and x = 0.65) from the
+# 1/(eps + (x-c)^2) terms, joined at x = 0.6.
 f2 <- function(x) {
   y <-
     ifelse(x < 0.6, 1 / (0.01 + (x - 0.3) ** 2), 1 / (0.015 + (x - 0.65) **
@@ -20,38 +29,47 @@ f2 <- function(x) {
   return(y)
 }
 
+# f3: smooth, symmetric bump (no discontinuities) - a baseline "easy" case.
 f3 <- function(x) {
   y <- 100 / (exp(abs(10 * x - 5))) + ((10 * x - 5) ^ 5) / 500
   return(y)
 }
 
+# f4: smooth oscillation with three vertical jumps at x = 0.4, 0.6, 0.8.
 f4 <- function(x) {
   y <- sin(15 * x) + 0.3 * x ^ 2
-  
+
   jump1 <- 0.4
   jump2 <- 0.6
   jump3 <- 0.8
-  
+
   y[x < jump1] <- y[x < jump1] + 2
   y[x >= jump1 & x < jump2] <- y[x >= jump1 & x < jump2] - 2
   y[x >= jump2 & x < jump3] <- y[x >= jump2 & x < jump3] + 1
-  
+
   return(y)
 }
 
+# f5: oscillation with jumps induced via sign() at specific grid indices
+# (x[59], x[78], x[180]) - depends on the length/spacing of x (n = 200
+# below), not on fixed x-values.
 f5 <- function(x){
-      result <- sin(5.5*pi*x) - 4*sign(x[59]-x) - 
+      result <- sin(5.5*pi*x) - 4*sign(x[59]-x) -
            2*sign(x[78]-x) +3*sign(x[180]-x)-1.75
       return(result)
 }
 
+# f6: oscillation with a jump at x = 0.7 (sign term) plus a non-smooth
+# kink at x = 0.4 (fractional-power |x-0.4|^(3/10) term).
 f6 <- function(x) {
   result <- 2*sin(4*pi*x)-6*abs(x-0.4)^(3/10)-sign(0.7-x)
   return(result)
 }
 
+# Evaluate `func` on grid `x`, then add Gaussian noise scaled so that the
+# ratio of signal variance to noise variance equals SNR.
 simulate_data <- function(func, x, SNR) {
-  f <- func(x) 
+  f <- func(x)
   sigma<- sqrt(var(f))/SNR
   noise<- rnorm(length(x), mean = 0, sd = sigma)
   y<-f+noise
@@ -62,7 +80,7 @@ simulate_data <- function(func, x, SNR) {
 n<-200
 x<-seq(0,1, length=n)
 SNR=3
-set.seed(123)
+set.seed(123)  # fixed seed -> reproducible noisy samples for the figure
 
 data1<-simulate_data(f1,x,SNR)
 
