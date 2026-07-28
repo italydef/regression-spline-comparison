@@ -156,6 +156,9 @@ source("make_estimates.R")
 ```
 
 Figures are written to `OUTPUT/Simulation/`.
+To plot true function f1, f2, f3, f4, f4, f6 plus a noisy sumulation, run functions.R
+The output plots ware written to `OUTPUT/Simulation/`.
+
 
 ### Real data
 
